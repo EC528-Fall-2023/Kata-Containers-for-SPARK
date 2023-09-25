@@ -1,6 +1,18 @@
 # [Kata Containers for SPARK](https://github.com/EC528-Fall-2023/Kata-Containers-for-SPARK)
 
-[toc]
+## collaborators
+
+| **Name**                       | **Role**    | **email**  |
+| ------------------------------ | ----------- | -------------------------------- |
+| Karla Sau                      | Mentor      | kasaur@microsoft.com             |
+| Jesús Camacho Rodríguez        | Mentor      | jesusca@microsoft.com            |
+| Anna Pavlenko                  | Mentor      | annapa@microsoft.com             |
+| Brain Kroth                    | Mentor      | bpkroth@gmail.com                |
+| Yingzhe(Danny) Dong            | Developer   | yzdong99@bu.edu                  |
+| Richard(Rui) Wei               | Developer   | rickwei@bu.edu                   |
+| Haocheng Zhao                  | Developer   | zhaohc@bu.edu                    |
+| Jinquan Pan                    | Developer   | vin3nt@bu.edu                    |
+| Jingwei Zhang                  | Developer   | jwz16@bu.edu                     |
 
 ** **
 
