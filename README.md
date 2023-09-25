@@ -1,6 +1,6 @@
 # [Kata Containers for SPARK](https://github.com/EC528-Fall-2023/Kata-Containers-for-SPARK)
 
-## collaborators
+## Collaborators
 
 | **Name**                       | **Role**    | **email**  |
 | ------------------------------ | ----------- | -------------------------------- |
