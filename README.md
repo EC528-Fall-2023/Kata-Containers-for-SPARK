@@ -16,6 +16,11 @@
 
 ** **
 
+## Sprint 1
+
+- presentation recording: https://bostonu.zoom.us/rec/share/-OiGa3CJQ71iLRJBKAZXCP4AW68naMUIR45OdTiJbJGVqiFFaTzC_bIyjk3Hacrl.xsRotqA5Ktk2xVG9?startTime=1695834627000 (password: h$7wCE!B)
+- demo recording: https://drive.google.com/file/d/1mzXQ6GnFklAdRTKHu0T2GJegXEGs6CU5/view?usp=drive_link
+
 ## Project Description Template
 
 > The purpose of this Project Description is to present the ideas proposed and decisions made during the preliminary envisioning and inception phase of the project. The goal is to analyze an initial concept proposal at a strategic level of detail and attain/compose an agreement between the project team members and the project customer (mentors and instructors) on the desired solution and overall project direction.

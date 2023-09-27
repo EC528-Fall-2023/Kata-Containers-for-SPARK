@@ -1,0 +1,43 @@
+version: '3'
+
+services:
+  resourcemanager:
+    image: hadoop-spark:latest
+    hostname: resourcemanager
+    container_name: resourcemanager
+    command: [ "sh", "-c", "service ssh start; /usr/local/hadoop/sbin/start-yarn.sh; tail -f /dev/null" ]
+    ports:
+      - "8088:8088"
+
+  namenode:
+    image: hadoop-spark:latest
+    hostname: namenode
+    container_name: namenode
+    command: [ "sh", "-c", "service ssh start; /usr/local/hadoop/bin/hdfs namenode -format; /usr/local/hadoop/sbin/start-dfs.sh; tail -f /dev/null" ]
+    ports:
+      - "9870:9870"
+    environment:
+      - HDFS_NAMENODE_NAME_DIR=/hadoop/dfs/name
+    volumes:
+      - namenode:/hadoop/dfs/name
+
+  nodemanager1:
+    image: hadoop-spark:latest
+    hostname: nodemanager1
+    container_name: nodemanager1
+    command: [ "sh", "-c", "service ssh start; /usr/local/hadoop/sbin/yarn-daemon.sh start nodemanager; tail -f /dev/null" ]
+    depends_on:
+      - resourcemanager
+      - namenode
+
+  nodemanager2:
+    image: hadoop-spark:latest
+    hostname: nodemanager2
+    container_name: nodemanager2
+    command: [ "sh", "-c", "service ssh start; /usr/local/hadoop/sbin/yarn-daemon.sh start nodemanager; tail -f /dev/null" ]
+    depends_on:
+      - resourcemanager
+      - namenode
+
+volumes:
+  namenode:
