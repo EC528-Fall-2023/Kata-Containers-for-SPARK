@@ -19,7 +19,7 @@
 ## Sprint 1
 
 - presentation recording: https://bostonu.zoom.us/rec/share/-OiGa3CJQ71iLRJBKAZXCP4AW68naMUIR45OdTiJbJGVqiFFaTzC_bIyjk3Hacrl.xsRotqA5Ktk2xVG9?startTime=1695834627000 (password: h$7wCE!B)
-- demo recording: https://drive.google.com/file/d/1mzXQ6GnFklAdRTKHu0T2GJegXEGs6CU5/view?usp=drive_link
+- demo recording: https://drive.google.com/file/d/1mzXQ6GnFklAdRTKHu0T2GJegXEGs6CU5/view?usp=sharing
 
 ## Project Description Template
 
