@@ -4,10 +4,10 @@
 
 | **Name**                       | **Role**    | **email**  |
 | ------------------------------ | ----------- | -------------------------------- |
-| Karla Sau                      | Mentor      | kasaur@microsoft.com             |
-| Jesús Camacho Rodríguez        | Mentor      | jesusca@microsoft.com            |
-| Anna Pavlenko                  | Mentor      | annapa@microsoft.com             |
-| Brain Kroth                    | Mentor      | bpkroth@gmail.com                |
+| Karla Saur                     | Mentor      |                                  |
+| Jesús Camacho Rodríguez        | Mentor      |                                  |
+| Anna Pavlenko                  | Mentor      |                                  |
+| Brian Kroth                    | Mentor      |                                  |
 | Yingzhe(Danny) Dong            | Developer   | yzdong99@bu.edu                  |
 | Richard(Rui) Wei               | Developer   | rickwei@bu.edu                   |
 | Haocheng Zhao                  | Developer   | zhaohc@bu.edu                    |
