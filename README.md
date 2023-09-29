@@ -63,7 +63,7 @@ Therefore, the goals of our project are:
 
 1. Deploy two Spark + YARN clusters with Kata and Docker Container enabled respectively.
 2. Write scripts to perform essential performance benchmarks and security tests against both Kata Container and Docker Container configurations. Deliver a detailed report.
-3. [Optional] Explore solutions to mitigate performance impact that comes from VM. ([virtio-fs](https://github.com/kata-containers/kata-containers/blob/main/docs/how-to/how-to-use-virtio-fs-with-kata.md))
+3. Explore solutions to mitigate performance impact that comes from VM. ([virtio-fs](https://github.com/kata-containers/kata-containers/blob/main/docs/how-to/how-to-use-virtio-fs-with-kata.md))
 
 ## 2. Users/Personas Of The Project:
 
