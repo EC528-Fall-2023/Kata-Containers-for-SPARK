@@ -1,1 +1,8 @@
+# IDEA files
 .idea
+
+# VSCode settings
+.vscode
+
+# Maven build artifacts
+target
