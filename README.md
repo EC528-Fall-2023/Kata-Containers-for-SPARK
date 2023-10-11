@@ -18,8 +18,12 @@
 
 ## Sprint 1
 
-- presentation recording: https://bostonu.zoom.us/rec/share/-OiGa3CJQ71iLRJBKAZXCP4AW68naMUIR45OdTiJbJGVqiFFaTzC_bIyjk3Hacrl.xsRotqA5Ktk2xVG9?startTime=1695834627000 (password: h$7wCE!B)
-- demo recording: https://drive.google.com/file/d/1mzXQ6GnFklAdRTKHu0T2GJegXEGs6CU5/view?usp=sharing
+- [Presentation recording](https://bostonu.zoom.us/rec/share/-OiGa3CJQ71iLRJBKAZXCP4AW68naMUIR45OdTiJbJGVqiFFaTzC_bIyjk3Hacrl.xsRotqA5Ktk2xVG9?startTime=1695834627000) (password: h$7wCE!B)
+- [Demo recording](https://drive.google.com/file/d/1mzXQ6GnFklAdRTKHu0T2GJegXEGs6CU5/view?usp=sharing)
+
+## Sprint 2
+- [Presentation recording](https://drive.google.com/file/d/1I7GToENjNFZMZ83ogLUtdYwEVRCxDudy/view?usp=sharing)
+- [Slides](https://docs.google.com/presentation/d/1f2JORSlS99BmGARTLpF5aTO4wMvvsTStnw2u-DY5vXw/edit?usp=sharing)
 
 ## 1.   Vision and Goals Of The Project:
 
