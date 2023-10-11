@@ -276,19 +276,3 @@ Create detailed documentation covering configurations, deployment procedures, se
 | 12/01                         | Security Assessment Result                                   |                                                              |
 
 **Note**: All releasing dates are approximately estimated as mentors said it is very possible that we could meet some issues in setup first cluster and connect the Kata containers. All delays should not exceed one week.
-
-** **
-
-## General comments
-
-Remember that you can always add features at the end of the semester, but you can't go back in time and gain back time you spent on features that you couldn't complete.
-
-** **
-
-For more help on markdown, see
-https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet
-
-In particular, you can add images like this (clone the repository to see details):
-
-![alt text](https://github.com/BU-NU-CLOUD-SP18/sample-project/raw/master/cloud.png "Hover text")
-
