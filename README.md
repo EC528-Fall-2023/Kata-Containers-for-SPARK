@@ -156,6 +156,9 @@ Create detailed documentation covering configurations, deployment procedures, se
 6. **Security Analysis Tools**:
    - Tools to demonstrate and assess potential vulnerabilities in a non-Kata setup and how they're addressed in a Kata setup.
 
+#### Project Plan:
+![ProjectPlan](./images/Project_Plan.png)
+
 #### Process Flow:
 
 1. A Spark application is submitted for execution on the cluster
