@@ -1,5 +1,3 @@
-Certainly! Here's the table of specific parameters for disk performance testing using FIO without the "Custom Test" entry:
-
 | Test Scenario         | FIO Parameter Settings                                  | Explanation                                                |
 |-----------------------|--------------------------------------------------------|------------------------------------------------------------|
 | Random Read Test      | `fio --name=random_read_test --rw=randread --bs=4k --direct=1 --size=512M --numjobs=1 --runtime=30s --filename=/path/to/testfile` | Simulates random read operations with a 4KB block size on a 512MB file for 30 seconds. This test provides a quick assessment of random read performance with reduced data size and runtime. |
