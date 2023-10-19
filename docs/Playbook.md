@@ -8,7 +8,15 @@
 
 add all ip addresses to the hosts on every node
 
+```
+x.x.x.x kata1
+x.x.x.x kata2
+.......
+```
+
 ### Install Spark
+
+you can actually do this only on master node
 
 ```sh
 wget https://dlcdn.apache.org/spark/spark-3.5.0/spark-3.5.0-bin-hadoop3.tgz
@@ -23,13 +31,31 @@ export SPARK_HOME=/usr/local/spark
 export PATH=$PATH:$SPARK_HOME/bin:$SPARK_HOME/sbin
 ```
 
+```sh
+source ~/.bashrc
+```
+
 ### Install Hadoop
+
+This must be done on every node
 
 https://dlcdn.apache.org/hadoop/common/hadoop-3.3.6/hadoop-3.3.6.tar.gz
 
-```xml
+```sh
 wget https://dlcdn.apache.org/hadoop/common/hadoop-3.3.6/hadoop-3.3.6.tar.gz
 tar -xvzf hadoop-3.3.6.tar.gz
+mv hadoop-3.3.6 /usr/local/hadoop
+```
+
+edit`~/.bashrc`
+
+```bash
+export HADOOP_HOME=/path/to/hadoop-3.x.x
+export PATH=$PATH:$HADOOP_HOME/bin:$HADOOP_HOME/sbin
+```
+
+```sh
+source ~/.bashrc
 ```
 
 ### Edit Hadoop
@@ -68,7 +94,7 @@ tar -xvzf hadoop-3.3.6.tar.gz
 </property>
 ```
 
-5. **Edit workers:** In `etc/hadoop/workers`, add:
+5. **Edit workers (on master node):** In `etc/hadoop/workers`, add:
 
 ```
 kata2
