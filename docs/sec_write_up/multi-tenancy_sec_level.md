@@ -10,20 +10,79 @@ Multi-tenancy refers to multiple users or teams running their Spark jobs on the 
 
 ## Threat Model in Multi-tenancy
 
-### Malicious Spark Job Execution
+### 1. Malicious Spark Job Execution
 
-- **`runc` Containers**: A Spark job could potentially exploit vulnerabilities in the Yarn container, affecting other jobs or the host system.
-- **Kata Containers**: Even if a malicious job breaks out of its container, it’s still contained within a VM.
+#### Context:
+In multi-tenant systems, there's a possibility that a user might run a malicious Spark job, either intentionally or due to compromised data/code. This job could target vulnerabilities within the container or the underlying infrastructure.
 
-### Snooping on Other Jobs' Data
+#### `runc` Containers:
 
-- **`runc` Containers**: While Yarn does provide isolation, sharing the host's kernel might leave a small window for data leakage across containers.
-- **Kata Containers**: The VM layer further ensures data separation between jobs.
+**Example**: 
+Imagine an attacker is able to upload a Spark job with a payload designed to exploit a known `runc` vulnerability. Once the job is scheduled and running:
 
-### Resource Hijacking
+- The malicious Spark job runs within its Yarn container.
+- The payload identifies the vulnerability and attempts to break out of the container.
+- If successful, the attacker gains access to the host system, potentially affecting other jobs or the cluster itself.
 
-- **`runc` Containers**: A malicious or buggy job might consume more than its fair share of resources.
-- **Kata Containers**: The VM boundary ensures stricter adherence to allocated resources.
+#### Kata Containers:
+
+**Example**:
+Even if the same malicious Spark job is run:
+
+- The job starts inside a Yarn container which is inside a lightweight VM due to Kata.
+- If the payload attempts to break out of the container, it finds itself still confined within the VM.
+- The host system and other jobs, running in separate VMs, remain unaffected.
+
+---
+
+### 2. Snooping on Other Jobs' Data
+
+#### Context:
+Data privacy is a concern in multi-tenant systems. Malicious or misconfigured jobs might attempt to snoop on data processed by other jobs running concurrently.
+
+#### `runc` Containers:
+
+**Example**: 
+A user submits a Spark job designed to monitor memory or I/O operations. Given the shared kernel:
+
+- The Spark job starts processing within its assigned Yarn container.
+- Due to some kernel-level vulnerability or misconfiguration, the job begins to monitor memory areas outside its allocation.
+- It potentially captures data processed by other Spark jobs, leading to data leakage.
+
+#### Kata Containers:
+
+**Example**:
+For the same snooping Spark job:
+
+- The job is constrained not just by the Yarn container but also by the VM boundary.
+- Any attempt to monitor memory outside its allocation is thwarted by the VM's isolation mechanism.
+- Other jobs' data remains secure.
+
+---
+
+### 3. Resource Hijacking
+
+#### Context:
+Fair resource allocation is crucial in multi-tenant systems. Malicious or buggy jobs might try to consume more resources than allocated, degrading performance for other users.
+
+#### `runc` Containers:
+
+**Example**: 
+A Spark job is submitted which has a bug causing it to spawn an excessive number of threads:
+
+- The job runs within its Yarn container and starts consuming resources.
+- Due to the bug, it starts to strain the shared resources of the host system.
+- Other Spark jobs, even if they are within their resource limits, begin to experience performance degradation.
+
+#### Kata Containers:
+
+**Example**:
+For the same buggy Spark job:
+
+- As it begins to consume excessive resources, it's contained within its VM's boundary.
+- The VM guarantees resources up to its allocation limit. Beyond this, the buggy job might crash or slow down, but it doesn't affect other jobs running in separate VMs.
+
+---
 
 ## Defense Mechanisms in Multi-tenancy
 
@@ -34,8 +93,10 @@ Multi-tenancy refers to multiple users or teams running their Spark jobs on the 
 
 ### VM-based Isolation (Kata Defense for Yarn + Spark)
 
-- **Purpose**: Run each Yarn container inside its VM.
+- **Purpose**: Run each Yarn container inside its own VM.
 - **Effectiveness**: Strong isolation that ensures even if a Spark job becomes malicious or is compromised, it remains contained within its VM.
+
+---
 
 ## Which Is Better for Multi-tenancy?
 
@@ -54,9 +115,13 @@ Multi-tenancy refers to multiple users or teams running their Spark jobs on the 
 - **`runc` Containers**: Riskier, as malicious code might exploit the shared kernel or runtime.
 - **Kata Containers**: Safer, as the code is further isolated within a VM.
 
+---
+
 ## Conclusion for Multi-tenancy in Yarn + Spark
 
 When considering multi-tenancy in Yarn and Spark, Kata Containers offer a significant security enhancement. While `runc` containers provide a level of isolation, the added VM layer in Kata ensures stricter resource boundaries, enhanced data privacy, and a higher degree of isolation against untrusted or malicious code.
+
+---
 
 ### References
 
@@ -64,4 +129,3 @@ When considering multi-tenancy in Yarn and Spark, Kata Containers offer a signif
 - [Yarn Resource Management](https://hadoop.apache.org/docs/current/hadoop-yarn/hadoop-yarn-site/ResourceManagerHA.html)
 - [Spark on Yarn](https://spark.apache.org/docs/latest/running-on-yarn.html)
 
----
