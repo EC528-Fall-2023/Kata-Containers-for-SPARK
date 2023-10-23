@@ -1,0 +1,234 @@
+<?xml version="1.0"?>
+<!--
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License. See accompanying LICENSE file.
+-->
+
+<configuration>
+  <property>
+    <name>yarn.acl.enable</name>
+    <value>0</value>
+  </property>
+
+  <property>
+    <name>yarn.resourcemanager.hostname</name>
+    <value>kata-master</value>
+  </property>
+  
+  <property>
+    <name>yarn.nodemanager.aux-services</name>
+    <value>mapreduce_shuffle</value>
+  </property>
+
+  <property>
+    <name>yarn.nodemanager.aux-services</name>
+    <value>mapreduce_shuffle</value>
+  </property>
+
+  <property>
+    <name>yarn.nodemanager.resource.memory-mb</name>
+    <value>6144</value>
+  </property>
+
+  <property>
+    <name>yarn.scheduler.maximum-allocation-mb</name>
+    <value>6144</value>
+  </property>
+
+  <property>
+    <name>yarn.scheduler.minimum-allocation-mb</name>
+    <value>128</value>
+  </property>
+
+  <property>
+    <name>yarn.nodemanager.vmem-check-enabled</name>
+    <value>false</value>
+  </property>
+
+  <!-- Docker Container configurations START -->
+  <property>
+    <name>yarn.nodemanager.container-executor.class</name>
+    <value>org.apache.hadoop.yarn.server.nodemanager.LinuxContainerExecutor</value>
+    <description>
+      This is the container executor setting that ensures that all applications
+      are started with the LinuxContainerExecutor.
+    </description>
+  </property>
+
+  <property>
+    <name>yarn.nodemanager.linux-container-executor.group</name>
+    <value>hadoop</value>
+    <description>
+      The POSIX group of the NodeManager. It should match the setting in
+      "container-executor.cfg". This configuration is required for validating
+      the secure access of the container-executor binary.
+    </description>
+  </property>
+
+  <property>
+    <name>yarn.nodemanager.linux-container-executor.nonsecure-mode.limit-users</name>
+    <value>false</value>
+    <description>
+      Whether all applications should be run as the NodeManager process' owner.
+      When false, applications are launched instead as the application owner.
+    </description>
+  </property>
+
+  <property>
+    <name>yarn.nodemanager.runtime.linux.allowed-runtimes</name>
+    <value>default,docker</value>
+    <description>
+      Comma separated list of runtimes that are allowed when using
+      LinuxContainerExecutor. The allowed values are default, docker, and
+      javasandbox.
+    </description>
+  </property>
+
+  <property>
+    <name>yarn.nodemanager.runtime.linux.type</name>
+    <value></value>
+    <description>
+      Optional. Sets the default container runtime to use.
+    </description>
+  </property>
+
+  <property>
+    <name>yarn.nodemanager.runtime.linux.docker.image-name</name>
+    <value></value>
+    <description>
+      Optional. Default docker image to be used when the docker runtime is
+      selected.
+    </description>
+  </property>
+
+  <property>
+    <name>yarn.nodemanager.runtime.linux.docker.image-update</name>
+    <value>false</value>
+    <description>
+      Optional. Default option to decide whether to pull the latest image
+      or not.
+    </description>
+  </property>
+
+  <property>
+    <name>yarn.nodemanager.runtime.linux.docker.allowed-container-networks</name>
+    <value>host,none,bridge</value>
+    <description>
+      Optional. A comma-separated set of networks allowed when launching
+      containers. Valid values are determined by Docker networks available from
+      `docker network ls`
+    </description>
+  </property>
+
+  <property>
+    <name>yarn.nodemanager.runtime.linux.docker.default-container-network</name>
+    <value>host</value>
+    <description>
+      The network used when launching Docker containers when no
+      network is specified in the request. This network must be one of the
+      (configurable) set of allowed container networks.
+    </description>
+  </property>
+
+  <property>
+    <name>yarn.nodemanager.runtime.linux.docker.host-pid-namespace.allowed</name>
+    <value>false</value>
+    <description>
+      Optional. Whether containers are allowed to use the host PID namespace.
+    </description>
+  </property>
+
+  <property>
+    <name>yarn.nodemanager.runtime.linux.docker.privileged-containers.allowed</name>
+    <value>false</value>
+    <description>
+      Optional. Whether applications are allowed to run in privileged
+      containers. Privileged containers are granted the complete set of
+      capabilities and are not subject to the limitations imposed by the device
+      cgroup controller. In other words, privileged containers can do almost
+      everything that the host can do. Use with extreme care.
+    </description>
+  </property>
+
+  <property>
+    <name>yarn.nodemanager.runtime.linux.docker.delayed-removal.allowed</name>
+    <value>false</value>
+    <description>
+      Optional. Whether or not users are allowed to request that Docker
+      containers honor the debug deletion delay. This is useful for
+      troubleshooting Docker container related launch failures.
+    </description>
+  </property>
+
+  <property>
+    <name>yarn.nodemanager.runtime.linux.docker.stop.grace-period</name>
+    <value>10</value>
+    <description>
+      Optional. A configurable value to pass to the Docker Stop command. This
+      value defines the number of seconds between the docker stop command sending
+      a SIGTERM and a SIGKILL.
+    </description>
+  </property>
+
+  <property>
+    <name>yarn.nodemanager.runtime.linux.docker.privileged-containers.acl</name>
+    <value></value>
+    <description>
+      Optional. A comma-separated list of users who are allowed to request
+      privileged containers if privileged containers are allowed.
+    </description>
+  </property>
+
+  <property>
+    <name>yarn.nodemanager.runtime.linux.docker.capabilities</name>
+    <value>CHOWN,DAC_OVERRIDE,FSETID,FOWNER,MKNOD,NET_RAW,SETGID,SETUID,SETFCAP,SETPCAP,NET_BIND_SERVICE,SYS_CHROOT,KILL,AUDIT_WRITE</value>
+    <description>
+      Optional. This configuration setting determines the capabilities
+      assigned to docker containers when they are launched. While these may not
+      be case-sensitive from a docker perspective, it is best to keep these
+      uppercase. To run without any capabilites, set this value to
+      "none" or "NONE"
+    </description>
+  </property>
+
+  <property>
+    <name>yarn.nodemanager.runtime.linux.docker.enable-userremapping.allowed</name>
+    <value>true</value>
+    <description>
+      Optional. Whether docker containers are run with the UID and GID of the
+      calling user.
+    </description>
+  </property>
+
+  <property>
+    <name>yarn.nodemanager.runtime.linux.docker.userremapping-uid-threshold</name>
+    <value>1</value>
+    <description>
+      Optional. The minimum acceptable UID for a remapped user. Users with UIDs
+      lower than this value will not be allowed to launch containers when user
+      remapping is enabled.
+    </description>
+  </property>
+
+  <property>
+    <name>yarn.nodemanager.runtime.linux.docker.userremapping-gid-threshold</name>
+    <value>1</value>
+    <description>
+      Optional. The minimum acceptable GID for a remapped user. Users belonging
+      to any group with a GID lower than this value will not be allowed to
+      launch containers when user remapping is enabled.
+    </description>
+  </property>
+
+  <!-- Docker Container configurations END -->
+
+</configuration>
