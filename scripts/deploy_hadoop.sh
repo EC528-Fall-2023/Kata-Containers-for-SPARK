@@ -4,10 +4,7 @@
 # You need the SSH access (user 'ubuntu') to all the provided nodes before running this script.
 # You need to change "hadoop_nodes" file to include the information of all the nodes
 
-INIT_USER='ubuntu'
-HADOOP_USER='hadoop'
-
-. ./deploy_hadoop_function.sh
+. ./deploy_hadoop_functions.sh
 
 function check_getopt {
     # Check if getopt exists and support enhanced features
@@ -26,14 +23,14 @@ function check_getopt {
 }
 
 function show_usage {
-    # TODO
+    echo "$0 -vsf"
 }
 
 function parse_args {
     check_getopt
 
-    local short_options='vsif:'
-    local long_options='verbose,start-cluster,init,file:'
+    local short_options='vsf:'
+    local long_options='verbose,start-cluster,file:'
 
     local temp_opts=$(getopt --options $short_options --longoptions $long_options --name "$0" -- "$@")
 
@@ -66,12 +63,6 @@ function parse_args {
                 shift
                 continue
             ;;
-            '-i'|'--init')
-                echo "Will format hdfs namenode after eployment being finished '$2'"
-                INIT_HDFS=1
-                shift
-                continue
-            ;;
             '--')
                 shift
                 break
@@ -82,6 +73,10 @@ function parse_args {
             ;;
         esac
     done
+
+    if [[ -n "$VERBOSE" ]]; then
+        set -x
+    fi
 
     # -f/--file is requried option
     if [[ -z "$NODES_CONFIG_FILE" ]]; then
@@ -99,21 +94,23 @@ function start_deploy {
     set_envs_on_nodes
     setup_hosts_entries_on_nodes
     generate_master_pubkey
-    distribute_master_pubkey_to_workers
+    distribute_master_pubkey_to_nodes
 
-    run_remote_setup_on_nodes
+    setup_hadoop_yarn_on_nodes
 
     copy_hadoop_default_configs_to_nodes
+    copy_spark_default_configs_to_nodes
     copy_docker_daemon_config_to_nodes
     restart_systemd_and_docker_daemon_on_nodes
 
+    init_hdfs
+
+    enable_yarn_docker_on_nodes
+
     on_deploy_finished
 
-    if [[ -n "$INIT_HDFS" ]]; then
-        init_hdfs
-    fi
-
     if [[ -n "$START_CLUSTER" ]]; then
+        stop_hadoop_cluster
         start_hadoop_cluster
     fi
 }
