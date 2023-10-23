@@ -186,7 +186,7 @@ function copy_hadoop_default_configs_to_nodes {
     echo "Copying Hadoop preconfigured configs to all nodes..."
 
     for node in "${NODES[@]}"; do
-        scp -i $LOCAL_KEY_PRI -r "../assets/etc/hadoop" "$HADOOP_USER@$node:/tmp/hadoop_configs"
+        scp -q -i $LOCAL_KEY_PRI -r "../assets/etc/hadoop" "$HADOOP_USER@$node:/tmp/hadoop_configs"
         run_remote_cmd "$node" "sudo mv -f /tmp/hadoop_configs/hadoop/* \$HADOOP_HOME/etc/hadoop/"
     done
 
@@ -197,7 +197,7 @@ function copy_spark_default_configs_to_nodes {
     echo "Copying Spark preconfigured configs to all nodes..."
 
     for node in "${NODES[@]}"; do
-        scp -i $LOCAL_KEY_PRI -r "../assets/conf/spark/spark-env.sh" "$HADOOP_USER@$node:/tmp/spark-env.sh"
+        scp -q -i $LOCAL_KEY_PRI -r "../assets/conf/spark/spark-env.sh" "$HADOOP_USER@$node:/tmp/spark-env.sh"
         run_remote_cmd "$node" "sudo mv -f /tmp/spark-env.sh \$SPARK_HOME/conf/"
     done
 
@@ -208,7 +208,7 @@ function copy_docker_daemon_config_to_nodes {
     echo "Copying docker daemon.json to all nodes..."
 
     for node in "${NODES[@]}"; do
-        scp -i $LOCAL_KEY_PRI "../assets/etc/docker/daemon.json" "$HADOOP_USER@$node:/tmp/daemon.json"
+        scp -q -i $LOCAL_KEY_PRI "../assets/etc/docker/daemon.json" "$HADOOP_USER@$node:/tmp/daemon.json"
         run_remote_cmd "$node" "sudo mv -f /tmp/daemon.json /etc/docker/"
     done
 
