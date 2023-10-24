@@ -25,6 +25,11 @@
 - [Presentation recording](https://drive.google.com/file/d/1I7GToENjNFZMZ83ogLUtdYwEVRCxDudy/view?usp=sharing)
 - [Slides](https://docs.google.com/presentation/d/1f2JORSlS99BmGARTLpF5aTO4wMvvsTStnw2u-DY5vXw/edit?usp=sharing)
 
+## Sprint 3
+
+- [Presentation recording](https://drive.google.com/file/d/1xkkMr_NbhUGfiSxoKQaJ44rM1CUPee-4/view?usp=sharing)
+- [Slides](https://docs.google.com/presentation/d/1bzpdpI56Q1NrZ8graVRk1awhnbRQX8gWHeKdvJsfOZc/edit#slide=id.p)
+
 ## 1.   Vision and Goals Of The Project:
 
 > The vision section describes the final desired state of the project once the project is complete. It also specifies the key goals of the project. This section provides a context for decision-making. A shared vision among all team members can help ensuring that the solution meets the intended goals. A solid vision clarifies perspective and facilitates decision-making.
@@ -256,6 +261,13 @@ But as our mentor mentioned, the ideal way to do that is to put Kata out of the 
 ## 6.  Release Planning:
 
 > Release planning section describes how the project will deliver incremental sets of features and functions in a series of releases to completion. Identification of user stories associated with iterations that will ease/guide sprint planning sessions is encouraged. Higher level details for the first iteration is expected.
+
+### MVP
+
+So after the discussion with our mentors, we set the current system structure of our MVP as the diagram shown below:
+![MVP](./images/MVP.png)
+
+So firstly we will finish the first method we've mentioned before, which is keep Kata running in Docker by simply replacing the runtime of Docker from RunC to Kata. And all our performance benchmarks (WIP) and security assessments (this part may be only in theory) will be based on this structure. 
 
 ### Project Timeline
 

@@ -119,6 +119,8 @@ hdfs namenode -format
 7. **Start the Cluster (on master node):**
 
 ```sh
+stop-dfs.sh
+stop-yarn.sh
 start-dfs.sh
 start-yarn.sh
 ```
@@ -326,3 +328,57 @@ cd $SPARK_HOME
 $SPARK_HOME/examples/jars/spark-examples*.jar 1
 ```
 
+## Enable Kata Containers (in Docker)
+
+```sh
+ARCH=$(arch)
+BRANCH="${BRANCH:-master}"
+sudo sh -c "echo 'deb http://download.opensuse.org/repositories/home:/katacontainers:/releases:/${ARCH}:/${BRANCH}/xUbuntu_$(lsb_release -rs)/ /' > /etc/apt/sources.list.d/kata-containers.list"
+curl -sL  http://download.opensuse.org/repositories/home:/katacontainers:/releases:/${ARCH}:/${BRANCH}/xUbuntu_$(lsb_release -rs)/Release.key | sudo apt-key add -
+sudo -E apt-get update
+sudo -E apt-get -y install kata-runtime kata-proxy kata-shim
+```
+
+```
+sudo modprobe vhost_net
+sudo systemctl daemon-reload
+sudo systemctl restart docker
+sudo docker info | grep -i runtime
+```
+
+```sh
+  HADOOP_HOME=/usr/local/hadoop
+  YARN_EXAMPLES_JAR=$HADOOP_HOME/share/hadoop/mapreduce/hadoop-mapreduce-examples-*.jar
+  MOUNTS="$HADOOP_HOME:$HADOOP_HOME:ro,/etc/passwd:/etc/passwd:ro,/etc/group:/etc/group:ro,/usr/local/hadoop/share/hadoop/mapreduce:/usr/local/hadoop/share/hadoop/mapreduce:ro"
+  IMAGE_ID="library/openjdk:8"
+
+  export YARN_CONTAINER_RUNTIME_TYPE=docker
+  export YARN_CONTAINER_RUNTIME_DOCKER_IMAGE="library/openjdk:8"
+  export YARN_CONTAINER_RUNTIME_DOCKER_MOUNTS="$HADOOP_HOME:$HADOOP_HOME:ro,/etc/passwd:/etc/passwd:ro,/etc/group:/etc/group:ro,/usr/local/hadoop/share/hadoop/mapreduce:/usr/local/hadoop/share/hadoop/mapreduce:ro"
+
+  yarn jar $YARN_EXAMPLES_JAR pi \
+    -Dmapreduce.map.env.YARN_CONTAINER_RUNTIME_TYPE=docker \
+    -Dmapreduce.map.env.YARN_CONTAINER_RUNTIME_DOCKER_MOUNTS="$HADOOP_HOME:$HADOOP_HOME:ro,/etc/passwd:/etc/passwd:ro,/etc/group:/etc/group:ro,/usr/local/hadoop/share/hadoop/mapreduce:/usr/local/hadoop/share/hadoop/mapreduce:ro" \
+    -Dmapreduce.map.env.YARN_CONTAINER_RUNTIME_DOCKER_IMAGE="library/openjdk:8" \
+    -Dmapreduce.map.env.HADOOP_MAPRED_HOME="/usr/local/hadoop" \
+    -Dmapreduce.reduce.env.YARN_CONTAINER_RUNTIME_TYPE=docker \
+    -Dmapreduce.reduce.env.YARN_CONTAINER_RUNTIME_DOCKER_MOUNTS="$HADOOP_HOME:$HADOOP_HOME:ro,/etc/passwd:/etc/passwd:ro,/etc/group:/etc/group:ro,/usr/local/hadoop/share/hadoop/mapreduce:/usr/local/hadoop/share/hadoop/mapreduce:ro" \
+    -Dmapreduce.reduce.env.YARN_CONTAINER_RUNTIME_DOCKER_IMAGE="library/openjdk:8" \
+    -Dmapreduce.reduce.env.HADOOP_MAPRED_HOME="/usr/local/hadoop" \
+    1 40000
+```
+
+> ```sh
+> sudo journalctl -xu docker.service
+> ```
+
+```scala
+val count = sc.parallelize(1 to 100000).filter { _ =>
+  val x = math.random
+  val y = math.random
+  x*x + y*y < 1
+}.count()
+println(s"Pi is roughly ${4.0 * count / 100000}")
+```
+
+rsync
