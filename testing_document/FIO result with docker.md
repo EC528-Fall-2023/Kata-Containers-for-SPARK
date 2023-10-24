@@ -1,13 +1,14 @@
-# Random Write Test Results
+# Random Read Test Results
 
-| Random Write Test          | Performance Metrics                  |
+| Random Read Test            | Performance Metrics                  |
 |-----------------------------|--------------------------------------|
 | **Throughput**              |                                      |
-| - IOPS                      | 12.4k                               |
-| - Bandwidth                 | 48.3MiB/s or 50.6MB/s               |
-| **Average Latency**        | Approx. 77.38 microseconds           |
-| **Latency Percentiles**    | 90% under 117 microseconds           |
-| **Bandwidth Variability**  | Min: 31,872KiB/s, Max: 59,784KiB/s  |
+| - IOPS                      | 476                                  |
+| - Bandwidth                 | 1905KiB/s or 1.905MiB/s              |
+| **Average Latency**        | Approx. 2.1 milliseconds             |
+| **Latency Percentiles**    | 90% under 1532 microseconds          |
+| **Bandwidth Variability**  | Min: 990KiB/s, Max: 3112KiB/s       |
+| **IOPS Variability**       | Min IOPS: 247, Max IOPS: 778         |
 
 # Random Write Test Results
 
