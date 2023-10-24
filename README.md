@@ -244,12 +244,12 @@ But as our mentor mentioned, the ideal way to do that is to put Kata out of the 
 
 | **Success Criteria**           | **Status**  | **Related files**                | **Notes**                                                    |
 | ------------------------------ | ----------- | -------------------------------- | ------------------------------------------------------------ |
-| Stable Intergration            | Not started | *Script files will update later* | No critical errors or crashes                                |
+| Stable Intergration            | In progress | *Script files will update later* | No critical errors or crashes                                |
 | Data Movement Efficiency       | Not started | *Script files will update later* | Acgueve desired data transfer speed with virtio-fs           |
-| Performance Parity             | Not started | *Script files will update later* | Compare with standard Spark on containers                    |
+| Performance Parity             | In progress | *Script files will update later* | Compare with standard Spark on containers                    |
 | Multi-tenant Resillience       | Not started | *Script files will update later* | Support multiple users without issues                        |
 | Security Valdation             | Not started | *Script files will update later* | Kata fortified again vulnerabilities                         |
-| Documentation and Contribution | Not started | *Github repo & documentation*    | Ensure comprehensive documentation and open-source contributions |
+| Documentation and Contribution | In progress | *Github repo & documentation*    | Ensure comprehensive documentation and open-source contributions |
 | Postitive Feedback             | Not started | *Github repo & documentation*    | Gather feedback from mentors and participants                |
 | Learing Assessment             | In progress | *Github repo & documentation*    | Participants should understand key project areas.            |
 
