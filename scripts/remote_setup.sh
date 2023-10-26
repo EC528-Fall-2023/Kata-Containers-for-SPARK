@@ -58,17 +58,11 @@ function revert_hadoop_owners_lce {
     sudo chown $HADOOP_USER:hadoop "$HADOOP_HOME/etc/hadoop"
 }
 
-function create_folders {
-    sudo mkdir -p /var/hadoop/yarn/local-dir /var/hadoop/yarn/log-dir
-}
-
 function setup_hadoop_yarn {
     install_hadoop
     install_jre
     install_spark
     install_libssl
-    
-    create_folders
 
     revert_hadoop_owners_lce
 }
