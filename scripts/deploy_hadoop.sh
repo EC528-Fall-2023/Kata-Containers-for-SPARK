@@ -23,14 +23,26 @@ function check_getopt {
 }
 
 function show_usage {
-    echo "$0 -vsf"
+    usage="usage: $(basename "$0") [-h] [-f nodes_file] [-s] -- script to deploy Apache Hadoop YARN + Docker Cluster automatically
+
+    -h      show the help document
+
+    -f nodes_file
+            specify the file that contains the information of all the nodes
+
+    -s      if specified start the cluster after deployment being finished
+    
+    EXAMPLE 1:
+    ./deploy_hadoop.sh -f hadoop_nodes -s"
+
+    echo "$usage"
 }
 
 function parse_args {
     check_getopt
 
-    local short_options='vsf:'
-    local long_options='verbose,start-cluster,file:'
+    local short_options='hvsf:'
+    local long_options='help,verbose,start-cluster,file:'
 
     local temp_opts=$(getopt --options $short_options --longoptions $long_options --name "$0" -- "$@")
 
@@ -45,6 +57,10 @@ function parse_args {
 
     while true; do
         case "$1" in
+            '-h'|'--help')
+                show_usage
+                exit 0
+            ;;
             '-v'|'--verbose')
                 echo 'Verbose Mode enabled'
                 VERBOSE=1
@@ -58,7 +74,7 @@ function parse_args {
                 continue
             ;;
             '-s'|'--start-cluster')
-                echo "Will start cluster after deployment being finished '$2'"
+                echo "Will start cluster after deployment being finished"
                 START_CLUSTER=1
                 shift
                 continue
