@@ -14,23 +14,18 @@ function read_hadoop_nodes {
 }
 
 function run_remote_cmd {
-    local user
-    local host
-    local command
+    local user="$1"
+    local host="$2"
+    local command="$3"
+    local is_sudoer="$4"
 
-    if [[ "$1" = "$INIT_USER" ]]; then
-        user="$1"
-        host="$2"
-        command="$3"
+    ssh -i $LOCAL_KEY_PRI "$user@$host" "bash --login -c '$command'"
 
-        ssh "$user@$host" "$command"
-    else
-        user="$HADOOP_USER"
-        host="$1"
-        command="$2"
-
-        ssh -i $LOCAL_KEY_PRI "$user@$host" "bash --login -c '$command'"
-    fi
+    # if [[ "$is_sudoer" = "sudo" ]]; then
+    #     ssh -i $LOCAL_KEY_PRI "$user@$host" "sudo bash --login -c '$command'"
+    # else
+    #     ssh -i $LOCAL_KEY_PRI "$user@$host" "bash --login -c '$command'"
+    # fi
 }
 
 function run_remote_script {
@@ -60,7 +55,7 @@ function setup_hadoop_user_on_nodes {
         
         # Set NOPASSWD for hadoop user
         echo "Removing sudo password requirement for user 'hadoop'..."
-        run_remote_cmd "$INIT_USER" "$node" "sudo bash -c \"echo '$HADOOP_USER ALL=(ALL) NOPASSWD: ALL' > /etc/sudoers.d/$HADOOP_USER\""
+        run_remote_cmd "$INIT_USER" "$node" "sudo echo \"$HADOOP_USER ALL=(ALL) NOPASSWD: ALL\" | sudo tee /etc/sudoers.d/$HADOOP_USER > /dev/null"
         echo "Done"
     done
 
@@ -91,13 +86,13 @@ EOF
     # Append environment variables to each node's ~/.bashrc and ~/.profile
     local hadoop_env_set
     for node in "${NODES[@]}"; do
-        hadoop_env_set=$(run_remote_cmd "$node" "cat \$HOME/.bashrc | grep HADOOP_HOME | wc -l")
+        hadoop_env_set=$(run_remote_cmd "$HADOOP_USER" "$node" "cat \$HOME/.bashrc | grep HADOOP_HOME | wc -l")
 
         if [[ hadoop_env_set -ge 1 ]]; then
             continue
         fi
 
-        run_remote_cmd "$node" "echo '$vars' | tee -a \$HOME/.bashrc \$HOME/.profile > /dev/null"
+        run_remote_cmd "$HADOOP_USER" "$node" "echo '$vars' | tee -a \$HOME/.bashrc \$HOME/.profile > /dev/null"
     done
 
     echo "Done"
@@ -107,13 +102,13 @@ function generate_master_pubkey {
     echo "Generating ssh key on master node..."
 
     local has_key
-    has_key=$(run_remote_cmd  "$MASTER" "ls \$HOME/.ssh/id_ed25519" | wc -l)
+    has_key=$(run_remote_cmd "$HADOOP_USER" "$MASTER" "ls \$HOME/.ssh/id_ed25519" | wc -l)
 
     if [[ $has_key -ge 1 ]]; then
         return
     fi
 
-    run_remote_cmd "$MASTER" "ssh-keygen -t ed25519 -f \$HOME/.ssh/id_ed25519 -q -N ''"
+    run_remote_cmd "$HADOOP_USER" "$MASTER" "ssh-keygen -t ed25519 -f \$HOME/.ssh/id_ed25519 -q -N ''"
 
     echo "Done"
 }
@@ -124,7 +119,7 @@ function setup_hosts_entries_on_nodes {
     local hosts_entries=("$MASTER kata-master")
 
     for i in "${!WORKERS[@]}"; do
-        hosts_entries+=("$node kata-worker-$i")
+        hosts_entries+=("${WORKERS[i]} kata-worker-$((i+1))")
     done
 
     # Join hosts entries by ","
@@ -134,13 +129,13 @@ function setup_hosts_entries_on_nodes {
     hosts_entries_joined=$(echo "${hosts_entries_joined}" | tr ',' '\n')
 
     for node in "${NODES[@]}"; do
-        local n=$(run_remote_cmd "$node" "cat /etc/hosts | grep \"$hosts_entries_joined\" | wc -l")
+        local n=$(run_remote_cmd "$HADOOP_USER" "$node" "cat /etc/hosts | grep \"$hosts_entries_joined\" | wc -l")
 
         if [[ $n -ge 1 ]]; then
             continue
         fi
 
-        run_remote_cmd "$node" "sudo bash -c \"echo '$hosts_entries_joined' >> /etc/hosts\""
+        run_remote_cmd "$HADOOP_USER" "$node" "sudo echo \"$hosts_entries_joined\" | sudo tee -a /etc/hosts > /dev/null"
     done
 
     echo "Done"
@@ -151,13 +146,13 @@ function distribute_master_pubkey_to_nodes {
 
     local master_pubkey
     local pubkey_exists
-    master_pubkey=$(run_remote_cmd "$MASTER" "cat \$HOME/.ssh/id_ed25519.pub")
+    master_pubkey=$(run_remote_cmd "$HADOOP_USER" "$MASTER" "cat \$HOME/.ssh/id_ed25519.pub")
     for node in "${NODES[@]}"; do
         pubkey_exists=$(run_remote_cmd "$INIT_USER" "$node" "sudo cat /home/$HADOOP_USER/.ssh/authorized_keys | grep \"$master_pubkey\" | wc -l")
         if [[ pubkey_exists -ge 1 ]]; then
             continue
         fi
-        run_remote_cmd "$INIT_USER" "$node" "sudo bash -c \"echo '$master_pubkey' >> /home/$HADOOP_USER/.ssh/authorized_keys\""
+        run_remote_cmd "$INIT_USER" "$node" "sudo echo \"$master_pubkey\" | sudo tee -a /home/$HADOOP_USER/.ssh/authorized_keys"
     done
 
     echo "Done"
@@ -176,7 +171,7 @@ function distribute_local_pubkey_to_nodes {
             continue
         fi
 
-        run_remote_cmd "$INIT_USER" "$node" "sudo bash -c \"echo '$local_pubkey' >> /home/$HADOOP_USER/.ssh/authorized_keys\""
+        run_remote_cmd "$INIT_USER" "$node" "sudo echo \"$local_pubkey\" | sudo tee -a /home/$HADOOP_USER/.ssh/authorized_keys"
     done
 
     echo "Done"
@@ -187,7 +182,7 @@ function copy_hadoop_default_configs_to_nodes {
 
     for node in "${NODES[@]}"; do
         scp -q -i $LOCAL_KEY_PRI -r "../assets/etc/hadoop" "$HADOOP_USER@$node:/tmp/hadoop_configs"
-        run_remote_cmd "$node" "sudo mv -f /tmp/hadoop_configs/hadoop/* \$HADOOP_HOME/etc/hadoop/"
+        run_remote_cmd "$HADOOP_USER" "$node" "sudo mv -f /tmp/hadoop_configs/hadoop/* \$HADOOP_HOME/etc/hadoop/"
     done
 
     echo "Done"
@@ -198,7 +193,7 @@ function copy_spark_default_configs_to_nodes {
 
     for node in "${NODES[@]}"; do
         scp -q -i $LOCAL_KEY_PRI -r "../assets/conf/spark/spark-env.sh" "$HADOOP_USER@$node:/tmp/spark-env.sh"
-        run_remote_cmd "$node" "sudo mv -f /tmp/spark-env.sh \$SPARK_HOME/conf/"
+        run_remote_cmd "$HADOOP_USER" "$node" "sudo mv -f /tmp/spark-env.sh \$SPARK_HOME/conf/"
     done
 
     echo "Done"
@@ -207,9 +202,26 @@ function copy_spark_default_configs_to_nodes {
 function copy_docker_daemon_config_to_nodes {
     echo "Copying docker daemon.json to all nodes..."
 
+    local src_daemon_config="../assets/etc/docker/daemon.json"
+    if [[ -n "$ENABLE_KATA" ]]; then
+        echo "Detect Kata Runtime enabled, using daemon-kata.json"
+        src_daemon_config="../assets/etc/docker/daemon-kata.json"
+    fi
+
     for node in "${NODES[@]}"; do
-        scp -q -i $LOCAL_KEY_PRI "../assets/etc/docker/daemon.json" "$HADOOP_USER@$node:/tmp/daemon.json"
-        run_remote_cmd "$node" "sudo mv -f /tmp/daemon.json /etc/docker/"
+        scp -q -i $LOCAL_KEY_PRI "$src_daemon_config" "$HADOOP_USER@$node:/tmp/daemon.json"
+        run_remote_cmd "$HADOOP_USER" "$node" "sudo mv -f /tmp/daemon.json /etc/docker/"
+    done
+
+    echo "Done"
+}
+
+function copy_kata_manager_to_nodes {
+    echo "Copying kata-manager.sh to all nodes..."
+    
+    for node in "${NODES[@]}"; do
+        scp -q -i $LOCAL_KEY_PRI "./kata-manager.sh" "$HADOOP_USER@$node:/tmp/kata-manager.sh"
+        run_remote_cmd "$HADOOP_USER" "$node" "chmod +x /tmp/kata-manager.sh"
     done
 
     echo "Done"
@@ -219,8 +231,8 @@ function restart_systemd_and_docker_daemon_on_nodes {
     echo "Restarting systemd and docker daemon on all nodes..."
 
     for node in "${NODES[@]}"; do
-        run_remote_cmd "$node" "sudo systemctl daemon-reload"
-        run_remote_cmd "$node" "sudo systemctl restart docker.service"
+        run_remote_cmd "$HADOOP_USER" "$node" "sudo systemctl daemon-reload"
+        run_remote_cmd "$HADOOP_USER" "$node" "sudo systemctl restart docker.service"
     done
 
     echo "Done"
@@ -237,10 +249,20 @@ function setup_hadoop_yarn_on_nodes {
 }
 
 function enable_yarn_docker_on_nodes {
-    echo "Running remote_enable_yarn_docker.sh on all nodes"
+    echo "Running remote_enable_yarn_docker.sh on all nodes..."
 
     for node in "${NODES[@]}"; do
         run_remote_script $HADOOP_USER $node "remote_enable_yarn_docker.sh"
+    done
+
+    echo "Done"
+}
+
+function enable_yarn_kata_on_nodes {
+    echo "Running remote_enable_yarn_kata.sh on all nodes..."
+    
+    for node in "${NODES[@]}"; do
+        run_remote_script $HADOOP_USER $node "remote_enable_yarn_kata.sh"
     done
 
     echo "Done"
@@ -250,16 +272,31 @@ function on_deploy_finished {
     echo "Deploying Hadoop Cluster completed!"
 }
 
+function create_hadoop_logs_dir_on_nodes {
+    # After deploy, the owner of the $HADOOP_HOME$ is root,
+    # Then start.dfs.sh will get permission denied while creating logs dir.
+
+    echo "Creating logs dir in \$HADOOP_HOME..."
+
+    for node in "${NODES[@]}"; do
+        run_remote_cmd "$HADOOP_USER" "$node" "mkdir -p \$HADOOP_HOME/logs"
+    done
+
+    echo "Done"
+}
+
 function init_hdfs {
     stop_hadoop_cluster
 
     echo "Formatting Hadoop Cluster HDFS..."
 
     for node in "${NODES[@]}"; do
-        run_remote_cmd "$node" "rm -rf /home/hadoop/data/"
+        run_remote_cmd "$HADOOP_USER" "$node" "rm -rf /home/hadoop/data/"
     done
 
-    run_remote_cmd "$MASTER" "hdfs namenode -format -force"
+    run_remote_cmd "$HADOOP_USER" "$MASTER" "hdfs namenode -format -force"
+
+    create_hadoop_logs_dir_on_nodes
 
     echo "Done"
 }
@@ -268,22 +305,22 @@ function stop_hadoop_cluster {
     echo "Stopping Hadoop Cluster..."
 
     echo "Stopping HDFS..."
-    run_remote_cmd "$MASTER" "stop-dfs.sh"
+    run_remote_cmd "$HADOOP_USER" "$MASTER" "stop-dfs.sh"
 
     echo "Stopping YARN..."
-    run_remote_cmd "$MASTER" "stop-yarn.sh"
+    run_remote_cmd "$HADOOP_USER" "$MASTER" "stop-yarn.sh"
 
-    echo "Done"
+    echo "Hadoop Cluster Stopped"
 }
 
 function start_hadoop_cluster {
     echo "Starting Hadoop Cluster..."
 
     echo "Starting HDFS..."
-    run_remote_cmd "$MASTER" "start-dfs.sh"
+    run_remote_cmd "$HADOOP_USER" "$MASTER" "start-dfs.sh"
 
     echo "Starting YARN..."
-    run_remote_cmd "$MASTER" "start-yarn.sh"
+    run_remote_cmd "$HADOOP_USER" "$MASTER" "start-yarn.sh"
 
-    echo "Done"
+    echo "Hadoop Cluster Started"
 }

@@ -41,8 +41,8 @@ function show_usage {
 function parse_args {
     check_getopt
 
-    local short_options='hvsf:'
-    local long_options='help,verbose,start-cluster,file:'
+    local short_options='hvsf:k'
+    local long_options='help,verbose,start-cluster,file:,enable-kata'
 
     local temp_opts=$(getopt --options $short_options --longoptions $long_options --name "$0" -- "$@")
 
@@ -76,6 +76,12 @@ function parse_args {
             '-s'|'--start-cluster')
                 echo "Will start cluster after deployment being finished"
                 START_CLUSTER=1
+                shift
+                continue
+            ;;
+            '-k'|'--enable-kata')
+                echo "Will enable kata runtime for the cluster after deployment being finished"
+                ENABLE_KATA=1
                 shift
                 continue
             ;;
@@ -121,7 +127,12 @@ function start_deploy {
 
     init_hdfs
 
-    enable_yarn_docker_on_nodes
+    if [[ -z $ENABLE_KATA ]]; then
+        enable_yarn_docker_on_nodes
+    else
+        copy_kata_manager_to_nodes
+        enable_yarn_kata_on_nodes  
+    fi
 
     on_deploy_finished
 

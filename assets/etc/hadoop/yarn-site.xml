@@ -121,7 +121,7 @@
 
   <property>
     <name>yarn.nodemanager.runtime.linux.docker.allowed-container-networks</name>
-    <value>host,none,bridge</value>
+    <value>bridge,host,none</value>
     <description>
       Optional. A comma-separated set of networks allowed when launching
       containers. Valid values are determined by Docker networks available from
@@ -227,6 +227,13 @@
       to any group with a GID lower than this value will not be allowed to
       launch containers when user remapping is enabled.
     </description>
+  </property>
+
+  <property>
+    <description>The set of runtimes allowed when launching containers using the
+      DockerContainerRuntime.</description>
+    <name>yarn.nodemanager.runtime.linux.docker.allowed-container-runtimes</name>
+    <value>runc,kata,io.containerd.kata.v2</value>
   </property>
 
   <!-- Docker Container configurations END -->
