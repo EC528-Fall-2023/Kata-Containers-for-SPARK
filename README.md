@@ -29,6 +29,7 @@
 
 - [Presentation recording](https://drive.google.com/file/d/1xkkMr_NbhUGfiSxoKQaJ44rM1CUPee-4/view?usp=sharing)
 - [Slides](https://docs.google.com/presentation/d/1bzpdpI56Q1NrZ8graVRk1awhnbRQX8gWHeKdvJsfOZc/edit#slide=id.p)
+- [Auto-deploy Demo](https://www.youtube.com/watch?v=Vxnh76w_QIU)
 
 ## 1.   Vision and Goals Of The Project:
 

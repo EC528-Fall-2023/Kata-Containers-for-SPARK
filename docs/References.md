@@ -12,6 +12,7 @@
 - [Launching Applications Using Docker Containers](https://hadoop.apache.org/docs/stable/hadoop-yarn/hadoop-yarn-site/DockerContainers.html)
 - [How to Install and Set Up a 3-Node Hadoop Cluster - Linode](https://www.linode.com/docs/guides/how-to-install-and-set-up-hadoop-cluster/#run-and-monitor-hdfs)
 - [Troubleshooting Apache Hadoop YARN - Cloudera](https://docs.cloudera.com/cdp-private-cloud-base/7.1.9/yarn-troubleshooting/yarn-troubleshooting.pdf)
+- [Hadoop YARN Concepts and Applications - Cloudera](https://blog.cloudera.com/apache-hadoop-yarn-concepts-and-applications/)
 
 ## Kata Container
 
