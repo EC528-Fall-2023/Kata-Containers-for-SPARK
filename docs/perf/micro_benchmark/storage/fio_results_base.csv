@@ -1,0 +1,8 @@
+Test Name,Read IOPS,Write IOPS
+"random_read_test",124.500133,0
+"random_write_test",0,6880.832735
+"sequential_read_test",772.865124,0
+"sequential_write_test",0,11575.730813
+"random_read_multi_threaded_test",126.041458,0
+"random_write_multi_threaded_test",0,8785.181337
+"mixed_read_write_test",1473.90087,1376.200793
