@@ -21,16 +21,31 @@ declare -a tests=("random_read_test" "random_write_test" "sequential_read_test" 
 # Initialize CSV file with header
 echo "Test Name,Read IOPS,Write IOPS" > fio_results.csv
 
+# Function to translate test names to fio rw parameters
+translate_to_rw() {
+    case "$1" in
+        random_read*) echo "randread" ;;
+        random_write*) echo "randwrite" ;;
+        sequential_read*) echo "read" ;;
+        sequential_write*) echo "write" ;;
+        mixed_read_write*) echo "rw" ;;
+        *) echo "Unsupported test: $1" >&2; exit 1 ;;
+    esac
+}
+
 # Iterate through each test and append results to CSV
 for test_name in "${tests[@]}"; do
+    rw=$(translate_to_rw ${test_name})
+    numjobs=$(echo ${test_name} | grep -oP '(?<=_)\d+$') || 1
+
     # Run the fio test and output to JSON file
     fio --output-format=json \
         --name=${test_name} \
-        --rw=${test_name%_*} \
+        --rw=${rw} \
         --bs=4k \
         --direct=1 \
         --size=512M \
-        --numjobs=${test_name: -1} \
+        --numjobs=${numjobs:-1} \
         --runtime=30s \
         --filename=${TESTFILE} > "${test_name}.json"
 
