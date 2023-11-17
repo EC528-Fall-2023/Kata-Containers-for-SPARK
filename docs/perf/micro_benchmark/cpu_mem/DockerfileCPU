@@ -1,0 +1,13 @@
+FROM ubuntu:latest
+
+RUN apt-get update && apt-get install -y stress-ng
+
+# Create a directory to mount the host directory
+WORKDIR /data
+
+# Copy the script into the container
+COPY stress_tests.sh /data/stress_tests.sh
+RUN chmod +x /data/stress_tests.sh
+
+# Set the script as the entry point
+ENTRYPOINT ["/data/stress_tests.sh"]
