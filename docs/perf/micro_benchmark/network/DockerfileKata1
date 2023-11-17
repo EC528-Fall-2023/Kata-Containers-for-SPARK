@@ -1,0 +1,11 @@
+# Use an official Ubuntu base image
+FROM ubuntu:latest
+
+# Install iperf3
+RUN apt-get update && apt-get install -y iperf3
+
+# Expose the default iperf3 server port
+EXPOSE 5201
+
+# Command to run iperf3 in server mode
+CMD ["iperf3", "-s"]
