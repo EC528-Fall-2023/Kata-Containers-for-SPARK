@@ -23,7 +23,7 @@ function install_jre {
 
     wget -q https://github.com/adoptium/temurin8-binaries/releases/download/jdk8u382-b05/OpenJDK8U-jre_x64_linux_hotspot_8u382b05.tar.gz
     tar -xf OpenJDK8U-jre_x64_linux_hotspot_8u382b05.tar.gz
-    sudo mv -f jdk8u382-b05-jre "/usr/local/$JAVA_HOME"
+    sudo mv -f jdk8u382-b05-jre "$JAVA_HOME"
     rm OpenJDK8U-jre_x64_linux_hotspot_8u382b05.tar.gz
 }
 
