@@ -25,3 +25,6 @@
 
 - [Implementing Container Manager - Ivan Velichko](https://iximiuz.com/en/series/implementing-container-manager/)
 - [Layered Docker architecture - Ivan Velichko](https://iximiuz.com/implementing-container-runtime-shim/docker-containerd-runc-2000-opt.png)
+
+## Network
+- [Set Up Docker Overlay Network](https://docs.docker.com/network/network-tutorial-overlay/#use-an-overlay-network-for-standalone-containers)
