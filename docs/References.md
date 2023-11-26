@@ -28,3 +28,4 @@
 
 ## Network
 - [Set Up Docker Overlay Network](https://docs.docker.com/network/network-tutorial-overlay/#use-an-overlay-network-for-standalone-containers)
+- [Kata Containers' Network Limitations](https://github.com/kata-containers/kata-containers/blob/main/docs/Limitations.md#networking)
