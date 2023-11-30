@@ -26,3 +26,5 @@ kata
   In `runc`, the network stack is less complex as it directly interfaces with the host's network, reducing latency and increasing throughput.
   
   `kata-runtime` involves a more complex network stack. The network packets must traverse the guest OS's network stack, the virtualization layer, and then the host OS's network stack, adding latency and potentially reducing throughput.
+
+![Network Comparison](./Network.png)
