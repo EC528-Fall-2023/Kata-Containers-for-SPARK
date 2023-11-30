@@ -55,3 +55,5 @@ stress-ng: info:  [7] stress-ng-stream: memory rate: 1709.03 MB/sec, 683.61 Mflo
   
 - **Memory Access Patterns**
   `runc` containers can directly benefit from the host machine's memory access optimizations, such as hugepages. This can significantly improve memory access efficiency. In `kata-runtime`, due to the additional virtualization layer, these optimizations might not be available or as effective.
+
+![CPU_MEM Comparison](./CPU%20and%20Memory.png)
