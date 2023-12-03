@@ -4,6 +4,8 @@
   - [Apache Hadoop](#apache-hadoop)
   - [Kata Container](#kata-container)
   - [Container](#container)
+  - [Network](#network)
+  - [Spark](#spark)
 
 ## Apache Hadoop
 
@@ -29,3 +31,8 @@
 ## Network
 - [Set Up Docker Overlay Network](https://docs.docker.com/network/network-tutorial-overlay/#use-an-overlay-network-for-standalone-containers)
 - [Kata Containers' Network Limitations](https://github.com/kata-containers/kata-containers/blob/main/docs/Limitations.md#networking)
+## Spark
+- [Cluster Overview - Apache Spark](https://spark.apache.org/docs/latest/cluster-overview.html)
+- [Configuration - Spark 3.5.0](https://spark.apache.org/docs/3.5.0/configuration.html)
+- [Submitting Applications - Spark 3.5.0](https://spark.apache.org/docs/3.5.0/submitting-applications.html)
+- [Running on YARN - Spark 3.5.0](https://spark.apache.org/docs/3.5.0/running-on-yarn.html)
