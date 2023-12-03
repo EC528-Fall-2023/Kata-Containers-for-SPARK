@@ -238,4 +238,28 @@
 
   <!-- Docker Container configurations END -->
 
+  <!-- Application logs configuration START -->
+
+  <property>
+    <name>yarn.log-aggregation-enable</name>
+    <value>true</value>
+  </property>
+
+  <property>
+    <name>yarn.nodemanager.remote-app-log-dir</name>
+    <value>/app-logs</value>
+  </property>
+  
+  <property>
+    <name>yarn.nodemanager.remote-app-log-dir-suffix</name>
+    <value>logs</value>
+  </property>
+
+  <property>
+    <name>yarn.nodemanager.default-container-executor.log-dirs.permissions</name>
+    <value>755</value>
+  </property>
+
+  <!-- Application logs configuration END -->
+
 </configuration>

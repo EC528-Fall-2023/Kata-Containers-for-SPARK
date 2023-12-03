@@ -4,6 +4,8 @@
   - [Apache Hadoop](#apache-hadoop)
   - [Kata Container](#kata-container)
   - [Container](#container)
+  - [Network](#network)
+  - [Spark](#spark)
 
 ## Apache Hadoop
 
@@ -12,6 +14,7 @@
 - [Launching Applications Using Docker Containers](https://hadoop.apache.org/docs/stable/hadoop-yarn/hadoop-yarn-site/DockerContainers.html)
 - [How to Install and Set Up a 3-Node Hadoop Cluster - Linode](https://www.linode.com/docs/guides/how-to-install-and-set-up-hadoop-cluster/#run-and-monitor-hdfs)
 - [Troubleshooting Apache Hadoop YARN - Cloudera](https://docs.cloudera.com/cdp-private-cloud-base/7.1.9/yarn-troubleshooting/yarn-troubleshooting.pdf)
+- [Hadoop YARN Concepts and Applications - Cloudera](https://blog.cloudera.com/apache-hadoop-yarn-concepts-and-applications/)
 
 ## Kata Container
 
@@ -24,3 +27,12 @@
 
 - [Implementing Container Manager - Ivan Velichko](https://iximiuz.com/en/series/implementing-container-manager/)
 - [Layered Docker architecture - Ivan Velichko](https://iximiuz.com/implementing-container-runtime-shim/docker-containerd-runc-2000-opt.png)
+
+## Network
+- [Set Up Docker Overlay Network](https://docs.docker.com/network/network-tutorial-overlay/#use-an-overlay-network-for-standalone-containers)
+- [Kata Containers' Network Limitations](https://github.com/kata-containers/kata-containers/blob/main/docs/Limitations.md#networking)
+## Spark
+- [Cluster Overview - Apache Spark](https://spark.apache.org/docs/latest/cluster-overview.html)
+- [Configuration - Spark 3.5.0](https://spark.apache.org/docs/3.5.0/configuration.html)
+- [Submitting Applications - Spark 3.5.0](https://spark.apache.org/docs/3.5.0/submitting-applications.html)
+- [Running on YARN - Spark 3.5.0](https://spark.apache.org/docs/3.5.0/running-on-yarn.html)
