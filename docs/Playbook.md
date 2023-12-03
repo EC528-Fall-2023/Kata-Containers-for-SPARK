@@ -313,7 +313,6 @@ sudo chown root:ubuntu /usr/local/hadoop/etc/hadoop
     IMAGE_ID="library/openjdk:8"
 
  
-
   $SPARK_HOME/bin/spark-submit \
   --class org.apache.spark.examples.SparkPi \
   --master yarn \
@@ -326,24 +325,10 @@ sudo chown root:ubuntu /usr/local/hadoop/etc/hadoop
   --conf spark.executorEnv.YARN_CONTAINER_RUNTIME_TYPE=docker \
   --conf spark.executorEnv.YARN_CONTAINER_RUNTIME_DOCKER_IMAGE=$IMAGE_ID \
   --conf spark.executorEnv.YARN_CONTAINER_RUNTIME_DOCKER_MOUNTS=$MOUNTS \
-  --conf spark.driver.bindAddress="0.0.0.0" \
-  --conf spark.driver.host="172.17.0.1" \
-  --conf spark.driver.port="1234" \
-  --conf spark.blockManager.bindAddress="0.0.0.0" \
-  --conf spark.blockManager.port=35430 \
-  --conf spark.yarn.appMasterEnv.YARN_CONTAINER_RUNTIME_DOCKER_CONTAINER_NETWORK=host \
-  --conf spark.yarn.executorEnv.YARN_CONTAINER_RUNTIME_DOCKER_CONTAINER_NETWORK=host \
-  --conf spark.yarn.executorEnv.YARN_CONTAINER_RUNTIME_DOCKER_PORTS_MAPPING="35430:35430"\
-  --conf spark.driver.blockManager.port=44349 \
   $SPARK_HOME/examples/jars/spark-examples*.jar 1
-
-
-  IMAGE_ID="kata-app"
 ```
 
-```sh
-
-```
+Other commands to test:
 
 ```sh
   $SPARK_HOME/bin/spark-submit \
@@ -383,8 +368,6 @@ sudo chown root:ubuntu /usr/local/hadoop/etc/hadoop
   --conf spark.executorEnv.YARN_CONTAINER_RUNTIME_DOCKER_PORTS_MAPPING="35430:35430,35445:35445"\
   $SPARK_HOME/examples/jars/spark-examples*.jar 1
 ```
-
-
 
 ## Enable Kata Containers (in Docker)
 
@@ -432,8 +415,13 @@ sudo docker info | grep -i runtime
 
 #### Use Client Mode
 
+> In this mode, the SparkDriver runs on the client side, which is reachable from the executor containers in the cluster, so there is no need to modify the network. Both the ApplicationMaster and the Executors can use bridge network.
+
 ```sh
-  $SPARK_HOME/bin/spark-submit \
+MOUNTS="$HADOOP_HOME:$HADOOP_HOME:ro,/etc/passwd:/etc/passwd:ro,/etc/group:/etc/group:ro,/usr/local/hadoop/share/hadoop/mapreduce:/usr/local/hadoop/share/hadoop/mapreduce:ro,/tmp/hadoop-ubuntu/nm-local-dir:/tmp/hadoop-ubuntu/nm-local-dir:rw,/var/log/myapp:/var/log/myapp:rw,/tmp/hadoop-ubuntu/nm-local-dir/usercache/ubuntu:/tmp/hadoop-ubuntu/nm-local-dir/usercache/ubuntu:rw"
+IMAGE_ID="library/openjdk:8"
+
+$SPARK_HOME/bin/spark-submit \
   --class org.apache.spark.examples.SparkPi \
   --master yarn \
   --deploy-mode client \
@@ -453,8 +441,13 @@ sudo docker info | grep -i runtime
 
 #### Use Cluster Mode
 
+> In this mode, the SparkDriver runs inside of the ApplicationMaster container, which makes it unreachable from the executors when using bridge network (since every node has its own bridge network). So you need to modify the network configuration to make the ApplicationMaster container runs using the host network.
+
 ```sh
-  $SPARK_HOME/bin/spark-submit \
+MOUNTS="$HADOOP_HOME:$HADOOP_HOME:ro,/etc/passwd:/etc/passwd:ro,/etc/group:/etc/group:ro,/usr/local/hadoop/share/hadoop/mapreduce:/usr/local/hadoop/share/hadoop/mapreduce:ro,/tmp/hadoop-ubuntu/nm-local-dir:/tmp/hadoop-ubuntu/nm-local-dir:rw,/var/log/myapp:/var/log/myapp:rw,/tmp/hadoop-ubuntu/nm-local-dir/usercache/ubuntu:/tmp/hadoop-ubuntu/nm-local-dir/usercache/ubuntu:rw"
+IMAGE_ID="library/openjdk:8"
+
+$SPARK_HOME/bin/spark-submit \
   --class org.apache.spark.examples.SparkPi \
   --master yarn \
   --deploy-mode cluster \
@@ -476,45 +469,13 @@ sudo docker info | grep -i runtime
 #### Submit TPC-H Task
 
 ```sh
+MOUNTS="$HADOOP_HOME:$HADOOP_HOME:ro,/etc/passwd:/etc/passwd:ro,/etc/group:/etc/group:ro,/usr/local/hadoop/share/hadoop/mapreduce:/usr/local/hadoop/share/hadoop/mapreduce:ro,/tmp/hadoop-ubuntu/nm-local-dir:/tmp/hadoop-ubuntu/nm-local-dir:rw,/var/log/myapp:/var/log/myapp:rw,/tmp/hadoop-ubuntu/nm-local-dir/usercache/ubuntu:/tmp/hadoop-ubuntu/nm-local-dir/usercache/ubuntu:rw"
+IMAGE_ID="library/openjdk:8"
+
 $SPARK_HOME/bin/spark-submit --class "main.scala.TpchQuery" --master yarn --deploy-mode client --executor-memory 2g --num-executors 3 --conf spark.yarn.appMasterEnv.YARN_CONTAINER_RUNTIME_TYPE=docker --conf spark.yarn.appMasterEnv.YARN_CONTAINER_RUNTIME_DOCKER_IMAGE=$IMAGE_ID --conf spark.yarn.appMasterEnv.YARN_CONTAINER_RUNTIME_DOCKER_MOUNTS=$MOUNTS --conf spark.executorEnv.YARN_CONTAINER_RUNTIME_TYPE=docker --conf spark.executorEnv.YARN_CONTAINER_RUNTIME_DOCKER_IMAGE=$IMAGE_ID --conf spark.executorEnv.YARN_CONTAINER_RUNTIME_DOCKER_MOUNTS=$MOUNTS $SPARK_HOME/examples/jars/spark-tpc-h-queries_2.12-1.0.jar
 ```
 
-
-
-```sh
-  HADOOP_HOME=/usr/local/hadoop
-  YARN_EXAMPLES_JAR=$HADOOP_HOME/share/hadoop/mapreduce/hadoop-mapreduce-examples-*.jar
-  MOUNTS="$HADOOP_HOME:$HADOOP_HOME:ro,/etc/passwd:/etc/passwd:ro,/etc/group:/etc/group:ro,/usr/local/hadoop/share/hadoop/mapreduce:/usr/local/hadoop/share/hadoop/mapreduce:ro"
-  IMAGE_ID="library/openjdk:8"
-
-  export YARN_CONTAINER_RUNTIME_TYPE=docker
-  export YARN_CONTAINER_RUNTIME_DOCKER_IMAGE="library/openjdk:8"
-  export YARN_CONTAINER_RUNTIME_DOCKER_MOUNTS="$HADOOP_HOME:$HADOOP_HOME:ro,/etc/passwd:/etc/passwd:ro,/etc/group:/etc/group:ro,/usr/local/hadoop/share/hadoop/mapreduce:/usr/local/hadoop/share/hadoop/mapreduce:ro"
-
-  yarn jar $YARN_EXAMPLES_JAR pi \
-    -Dmapreduce.map.env.YARN_CONTAINER_RUNTIME_TYPE=docker \
-    -Dmapreduce.map.env.YARN_CONTAINER_RUNTIME_DOCKER_MOUNTS="$HADOOP_HOME:$HADOOP_HOME:ro,/etc/passwd:/etc/passwd:ro,/etc/group:/etc/group:ro,/usr/local/hadoop/share/hadoop/mapreduce:/usr/local/hadoop/share/hadoop/mapreduce:ro" \
-    -Dmapreduce.map.env.YARN_CONTAINER_RUNTIME_DOCKER_IMAGE="library/openjdk:8" \
-    -Dmapreduce.map.env.HADOOP_MAPRED_HOME="/usr/local/hadoop" \
-    -Dmapreduce.reduce.env.YARN_CONTAINER_RUNTIME_TYPE=docker \
-    -Dmapreduce.reduce.env.YARN_CONTAINER_RUNTIME_DOCKER_MOUNTS="$HADOOP_HOME:$HADOOP_HOME:ro,/etc/passwd:/etc/passwd:ro,/etc/group:/etc/group:ro,/usr/local/hadoop/share/hadoop/mapreduce:/usr/local/hadoop/share/hadoop/mapreduce:ro" \
-    -Dmapreduce.reduce.env.YARN_CONTAINER_RUNTIME_DOCKER_IMAGE="library/openjdk:8" \
-    -Dmapreduce.reduce.env.HADOOP_MAPRED_HOME="/usr/local/hadoop" \
-    1 40000
-```
-
-```scala
-val count = sc.parallelize(1 to 100000).filter { _ =>
-  val x = math.random
-  val y = math.random
-  x*x + y*y < 1
-}.count()
-println(s"Pi is roughly ${4.0 * count / 100000}")
-```
-
-
-
-
+## Other Potential Solutions
 
 1. Overlay network (docker swarm)
 2. registry service
