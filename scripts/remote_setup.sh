@@ -32,10 +32,14 @@ function install_spark {
         return
     fi
 
-    wget -q https://dlcdn.apache.org/spark/spark-3.5.0/spark-3.5.0-bin-without-hadoop.tgz
-    tar -xf spark-3.5.0-bin-without-hadoop.tgz
-    sudo mv -f spark-3.5.0-bin-without-hadoop "$SPARK_HOME"
-    rm spark-3.5.0-bin-without-hadoop.tgz
+    # wget -q https://dlcdn.apache.org/spark/spark-3.5.0/spark-3.5.0-bin-without-hadoop.tgz
+
+    # Use custom build
+    local spark_filename='spark-3.5.1-SNAPSHOT-bin-custom-spark.tgz'
+    wget -q "https://github.com/EC528-Fall-2023/Kata-Containers-for-SPARK/releases/download/v0.0.1/$spark_filename"
+    tar -xf "$spark_filename"
+    sudo mv -f "$spark_filename" "$SPARK_HOME"
+    rm "$spark_filename"
 }
 
 function install_libssl {
