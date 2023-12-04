@@ -228,7 +228,6 @@ But as our mentor mentioned, the ideal way to do that is to put Kata out of the 
           ![Netwrok](./images/Network.png)
      - Memory bandwidth, memory allocation (stresses virtual memory subsystem), CPU performance
        - Can use `stress-ng` for this, there are several tests available there (e.g., matrix multiple for CPU, memory bandwidth, vmem allocator, etc.)
-          ![CPU](./images/CPU and Memory.png)
    - End to end benchmarks
    
      - TPC-H (have to look around for what's the best way to do this for Spark)
