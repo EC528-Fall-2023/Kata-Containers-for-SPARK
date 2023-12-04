@@ -232,7 +232,7 @@ But as our mentor mentioned, the ideal way to do that is to put Kata out of the 
            - IOPS (e.g., 4K random read/writes)
    
            - BW (e.g., sequential read and sequential write of large files with large block size)
-   
+           ![Storage](./images/Storage.png)
        - Networking
    
          - use `iperf3` to measure
@@ -240,10 +240,10 @@ But as our mentor mentioned, the ideal way to do that is to put Kata out of the 
            - TCP bandwidth
    
            - UDP latency (e.g., packets per second, tail latency like P95)
-   
+          ![Netwrok](./images/Network.png)
      - Memory bandwidth, memory allocation (stresses virtual memory subsystem), CPU performance
        - Can use `stress-ng` for this, there are several tests available there (e.g., matrix multiple for CPU, memory bandwidth, vmem allocator, etc.)
-   
+          ![CPU](./images/CPU and Memory.png)
    - End to end benchmarks
    
      - TPC-H (have to look around for what's the best way to do this for Spark)
