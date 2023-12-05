@@ -46,10 +46,6 @@
 
 ## 1.   Vision and Goals Of The Project:
 
-> The vision section describes the final desired state of the project once the project is complete. It also specifies the key goals of the project. This section provides a context for decision-making. A shared vision among all team members can help ensuring that the solution meets the intended goals. A solid vision clarifies perspective and facilitates decision-making.
->
-> The vision statement should be specific enough that you can look at a proposed solution and say either "yes, this meets the vision and goals", or "no, it does not".
-
 This project is intended to enable Kata Container on Spark + YARN and perform necessary performance benchmarks and security tests, eventually we will be able to deliver a solution for deploying a Spark + YARN cluster with the Kata Container enabled and provide insights based on the performance and security analysis. The main users will be those security-sensitive users such as enterprises, government departments etc.
 
 ### Background
@@ -71,11 +67,12 @@ Therefore, the goals of our project are:
 2. Write scripts to perform essential performance benchmarks and security tests against both Kata Container and Docker Container configurations. Deliver a detailed report.
 3. Explore solutions to mitigate performance impact that comes from VM. ([virtio-fs](https://github.com/kata-containers/kata-containers/blob/main/docs/how-to/how-to-use-virtio-fs-with-kata.md))
 
-## 2. Users/Personas Of The Project:
+### Challenges
 
-> This section describes the principal user roles of the project together with the key characteristics of these roles. This information will inform the design and the user scenarios. A complete set of roles helps in ensuring that high-level requirements can be identified in the product backlog.
->
-> Again, the description should be specific enough that you can determine whether user A, performing action B, is a member of the set of users the project is designed for.
+We have encountered multiple challenges in this project:
+1. Spark Executor binding issue in Docker Bridge Network, [Root Cause Analysis](https://github.com/EC528-Fall-2023/Kata-Containers-for-SPARK/blob/main/docs/troubleshoot/rca-docker-bridge-net.md).
+
+## 2. Users/Personas Of The Project:
 
 ### Government IT Specialist - Robert
 
@@ -104,10 +101,6 @@ Therefore, the goals of our project are:
 ** **
 
 ## 3.   Scope and Features Of The Project:
-
-> The Scope places a boundary around the solution by detailing the range of features and functions of the project. This section helps to clarify the solution scope and can explicitly state what will not be delivered as well.
->
-> It should be specific enough that you can determine that e.g. feature A is in-scope, while feature B is out-of-scope.
 
 ### Container Integration:
 
@@ -138,12 +131,6 @@ Create detailed documentation covering configurations, deployment procedures, se
 ## 4. Solution Concept
 
 ### Global Architectural Structure Of the Project:
-
-> This section provides a high-level outline of the solution.
->
-> Global Architectural Structure Of the Project:
->
-> This section provides a high-level architecture or a conceptual diagram showing the scope of the solution. If wireframes or visuals have already been done, this section could also be used to show how the intended solution will look. This section also provides a walkthrough explanation of the architectural structure.
 
 #### Project Architecture:
 
@@ -220,14 +207,12 @@ The easiest and most doable way to implement that is not to touch the yarn sourc
 
 ### Design Implications and Discussion
 
->  This section discusses the implications and reasons of the design decisions made during the global architecture design.
-
 1. **Choice of Kata Containers**:
    - **Implication**: Incorporating Kata Containers introduces an added layer of complexity in setup and operation compared to traditional containers. However, the trade-off is a significantly enhanced security posture.
    - **Reasoning**: The goal to securely run multi-tenant Spark workloads demands a solution that offers stronger isolation than standard containers. Kata Containers strike a balance between the agility of containers and the isolation of VMs.
    
 3. **Performance Benchmarking**:
-   - Microbenchmarks
+   - Microbenchmarks(check docs/petf/micro_benchmark/README)
    
      - I/O
    
@@ -238,7 +223,7 @@ The easiest and most doable way to implement that is not to touch the yarn sourc
            - IOPS (e.g., 4K random read/writes)
    
            - BW (e.g., sequential read and sequential write of large files with large block size)
-   
+           ![Storage](./images/Storage.png)
        - Networking
    
          - use `iperf3` to measure
@@ -246,10 +231,10 @@ The easiest and most doable way to implement that is not to touch the yarn sourc
            - TCP bandwidth
    
            - UDP latency (e.g., packets per second, tail latency like P95)
-   
+          ![Netwrok](./images/Network.png)
      - Memory bandwidth, memory allocation (stresses virtual memory subsystem), CPU performance
        - Can use `stress-ng` for this, there are several tests available there (e.g., matrix multiple for CPU, memory bandwidth, vmem allocator, etc.)
-   
+       ![CPU_MEM](./images/CPU_and_Memory.png)
    - End to end benchmarks
    
      - TPC-H (have to look around for what's the best way to do this for Spark)
@@ -260,8 +245,6 @@ The easiest and most doable way to implement that is not to touch the yarn sourc
    - Kata container performance
 
 ## 5. Acceptance criteria
-
-> This section discusses the minimum acceptance criteria at the end of the project and stretch goals.
 
 | **Success Criteria**           | **Status**  | **Related files**                | **Notes**                                                    |
 | ------------------------------ | ----------- | -------------------------------- | ------------------------------------------------------------ |
@@ -275,8 +258,6 @@ The easiest and most doable way to implement that is not to touch the yarn sourc
 | Learing Assessment             | In progress | *Github repo & documentation*    | Participants should understand key project areas.            |
 
 ## 6.  Release Planning:
-
-> Release planning section describes how the project will deliver incremental sets of features and functions in a series of releases to completion. Identification of user stories associated with iterations that will ease/guide sprint planning sessions is encouraged. Higher level details for the first iteration is expected.
 
 ### MVP
 
