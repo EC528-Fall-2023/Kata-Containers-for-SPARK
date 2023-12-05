@@ -39,6 +39,10 @@
 - [Presentation recording](https://drive.google.com/file/d/16gnVQdNPfBdTbKA23dtxm5dmKnyIQINO/view?usp=sharing)
 - [Slides](https://docs.google.com/presentation/d/1aEtCeC3o9C9DcQWJcKfsWCWXjcded_tx-BlWZ9GvoPw/edit?usp=sharing)
 
+## Final Demo
+
+- 
+
 
 ## 1.   Vision and Goals Of The Project:
 
@@ -172,7 +176,7 @@ Create detailed documentation covering configurations, deployment procedures, se
  ```mermaid
  graph TD
      subgraph Infrastructure Layer
-       A[Cluster: AKS or Cloud Service] --> B[Nodes with Kata Support]
+       A[Cluster] --> B[Nodes with Kata Support]
      end
  
      subgraph Cluster Management Layer
@@ -200,17 +204,19 @@ Create detailed documentation covering configurations, deployment procedures, se
  
  ```
 
-### Two ways to connect Kata containers
+### Final Solution
 
-#### **Launching applications in Kata through docker**
+#### 1. Launching applications in Kata through docker
 
 ![img](./images/kataInDocker.png)
 
 The easiest and most doable way to implement that is not to touch the yarn source code but try to run Kata using Docker. To make a easy explanation, you can have a look at the figure. So when the user, in our case is the linux container executor in the node, sends a request to create a container. Firstly the request will be parsed and processed by docker engine, then docker engine calls the containerd, which is a high-level container runtime and is used as the container manager in docker. After that, the containerd sets up the low level container runtime, which is RunC by default, through shim apis. And Kata is natively supported to do that. Well in short terms, we can simply use docker to run kata by replacing runc which we already did.
 
-#### **Launching applications directly in Kata**
+> Another solution is launching applications directly in Kata. As our mentor mentioned, the ideal way to do that is to put Kata out of the box, which is much more complicated. This required us to implement some runtime classes under yarn like runc did (following the OCI standards), which will require us to look deeper at the interfaces of Linux Container Executor, and which we don't have enough time to do.
 
-But as our mentor mentioned, the ideal way to do that is to put Kata out of the box, which is much more complicated. We can try to implement some runtime classes under yarn like runc did (following the OCI standards), which will require us to look deeper at the interfaces of Linux Container Executor, and which we haven’t done yet.
+#### 2. 
+
+
 
 ### Design Implications and Discussion
 

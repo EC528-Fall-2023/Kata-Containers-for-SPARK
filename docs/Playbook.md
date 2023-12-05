@@ -16,7 +16,7 @@ x.x.x.x kata2
 
 ### Install Spark
 
-you can actually do this only on master node
+you can actually do this only on master node, and please use our modified Spark for this.
 
 ```sh
 wget https://dlcdn.apache.org/spark/spark-3.5.0/spark-3.5.0-bin-hadoop3.tgz
@@ -50,7 +50,7 @@ mv hadoop-3.3.6 /usr/local/hadoop
 edit`~/.bashrc`
 
 ```bash
-export HADOOP_HOME=/path/to/hadoop-3.x.x
+export HADOOP_HOME=/usr/local/hadoop
 export PATH=$PATH:$HADOOP_HOME/bin:$HADOOP_HOME/sbin
 ```
 
@@ -63,8 +63,6 @@ edit `hadoop-env.sh`, add below:
 ```
 export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
 ```
-
-
 
 ### Edit Hadoop
 
@@ -373,23 +371,20 @@ Other commands to test:
 
 ### Install Kata Container Runtime
 
+> [kata-containers/utils/README.md at main · kata-containers/kata-containers (github.com)](https://github.com/kata-containers/kata-containers/blob/main/utils/README.md)
+
 ```sh
-ARCH=$(arch)
-BRANCH="${BRANCH:-master}"
-sudo sh -c "echo 'deb http://download.opensuse.org/repositories/home:/katacontainers:/releases:/${ARCH}:/${BRANCH}/xUbuntu_$(lsb_release -rs)/ /' > /etc/apt/sources.list.d/kata-containers.list"
-curl -sL  http://download.opensuse.org/repositories/home:/katacontainers:/releases:/${ARCH}:/${BRANCH}/xUbuntu_$(lsb_release -rs)/Release.key | sudo apt-key add -
-sudo -E apt-get update
-sudo -E apt-get -y install kata-runtime kata-proxy kata-shim
+$ bash -c "$(curl -fsSL https://raw.githubusercontent.com/kata-containers/kata-containers/main/utils/kata-manager.sh)"
 ```
 
-### Set Kata Runtime as Default Runtime in Docker (Optional)
+### Set Kata Runtime in Docker
 
 1. In `/etc/docker/daemon.json`, add below:
 
 ```json
 {
   "dns": ["192.168.0.68", "8.8.8.8"],
-  "default-runtime":"kata-runtime",
+  "default-runtime":"kata",
   "runtimes": {
     "kata-runtime": {
       "runtimeType": "io.containerd.kata.v2"
@@ -411,6 +406,28 @@ sudo docker info | grep -i runtime
 
 > To get more debug info from docker engine, use `sudo journalctl -xu docker.service`
 
+### Allow Kata Container Runtime in YARN
+
+1. In `yarn-site.xml`, add below:
+
+```xml
+  <property>
+    <description>The set of runtimes allowed when launching containers using the
+      DockerContainerRuntime.</description>
+    <name>yarn.nodemanager.runtime.linux.docker.allowed-container-runtimes</name>
+    <value>runc,kata</value>
+  </property>
+```
+
+2. In `container-executor.cfg`, add kata to the allowed runtimes
+
+```
+...
+[docker]
+...
+  docker.allowed.runtimes=runc,kata
+```
+
 ### Submit a Spark Task
 
 #### Use Client Mode
@@ -418,7 +435,7 @@ sudo docker info | grep -i runtime
 > In this mode, the SparkDriver runs on the client side, which is reachable from the executor containers in the cluster, so there is no need to modify the network. Both the ApplicationMaster and the Executors can use bridge network.
 
 ```sh
-MOUNTS="$HADOOP_HOME:$HADOOP_HOME:ro,/etc/passwd:/etc/passwd:ro,/etc/group:/etc/group:ro,/usr/local/hadoop/share/hadoop/mapreduce:/usr/local/hadoop/share/hadoop/mapreduce:ro,/tmp/hadoop-ubuntu/nm-local-dir:/tmp/hadoop-ubuntu/nm-local-dir:rw,/var/log/myapp:/var/log/myapp:rw,/tmp/hadoop-ubuntu/nm-local-dir/usercache/ubuntu:/tmp/hadoop-ubuntu/nm-local-dir/usercache/ubuntu:rw"
+MOUNTS="$HADOOP_HOME:$HADOOP_HOME:ro,/etc/passwd:/etc/passwd:ro,/etc/group:/etc/group:ro,/usr/local/hadoop/share/hadoop/mapreduce:/usr/local/hadoop/share/hadoop/mapreduce:ro,/tmp/hadoop-ubuntu/nm-local-dir:/tmp/hadoop-ubuntu/nm-local-dir:rw"
 IMAGE_ID="library/openjdk:8"
 
 $SPARK_HOME/bin/spark-submit \
@@ -430,11 +447,12 @@ $SPARK_HOME/bin/spark-submit \
   --conf spark.yarn.appMasterEnv.YARN_CONTAINER_RUNTIME_TYPE=docker \
   --conf spark.yarn.appMasterEnv.YARN_CONTAINER_RUNTIME_DOCKER_IMAGE=$IMAGE_ID \
   --conf spark.yarn.appMasterEnv.YARN_CONTAINER_RUNTIME_DOCKER_MOUNTS=$MOUNTS \
+  --conf spark.yarn.appMasterEnv.YARN_CONTAINER_RUNTIME_DOCKER_RUNTIME=kata \
   --conf spark.executorEnv.YARN_CONTAINER_RUNTIME_TYPE=docker \
   --conf spark.executorEnv.YARN_CONTAINER_RUNTIME_DOCKER_IMAGE=$IMAGE_ID \
   --conf spark.executorEnv.YARN_CONTAINER_RUNTIME_DOCKER_MOUNTS=$MOUNTS \
-  --conf spark.driver.blockManager.port=44349 \
-  $SPARK_HOME/examples/jars/spark-examples*.jar 1000
+  --conf spark.executorEnv.YARN_CONTAINER_RUNTIME_DOCKER_RUNTIME=kata \
+  $SPARK_HOME/examples/jars/spark-examples*.jar 10
 ```
 
 ![img](./Playbook.assets/screenshot-from-2020-05-15-16-37-03-1.png)
@@ -444,7 +462,7 @@ $SPARK_HOME/bin/spark-submit \
 > In this mode, the SparkDriver runs inside of the ApplicationMaster container, which makes it unreachable from the executors when using bridge network (since every node has its own bridge network). So you need to modify the network configuration to make the ApplicationMaster container runs using the host network.
 
 ```sh
-MOUNTS="$HADOOP_HOME:$HADOOP_HOME:ro,/etc/passwd:/etc/passwd:ro,/etc/group:/etc/group:ro,/usr/local/hadoop/share/hadoop/mapreduce:/usr/local/hadoop/share/hadoop/mapreduce:ro,/tmp/hadoop-ubuntu/nm-local-dir:/tmp/hadoop-ubuntu/nm-local-dir:rw,/var/log/myapp:/var/log/myapp:rw,/tmp/hadoop-ubuntu/nm-local-dir/usercache/ubuntu:/tmp/hadoop-ubuntu/nm-local-dir/usercache/ubuntu:rw"
+MOUNTS="$HADOOP_HOME:$HADOOP_HOME:ro,/etc/passwd:/etc/passwd:ro,/etc/group:/etc/group:ro,/usr/local/hadoop/share/hadoop/mapreduce:/usr/local/hadoop/share/hadoop/mapreduce:ro,/tmp/hadoop-ubuntu/nm-local-dir:/tmp/hadoop-ubuntu/nm-local-dir:rw"
 IMAGE_ID="library/openjdk:8"
 
 $SPARK_HOME/bin/spark-submit \
@@ -457,11 +475,13 @@ $SPARK_HOME/bin/spark-submit \
   --conf spark.yarn.appMasterEnv.YARN_CONTAINER_RUNTIME_DOCKER_CONTAINER_NETWORK=host \
   --conf spark.yarn.appMasterEnv.YARN_CONTAINER_RUNTIME_DOCKER_IMAGE=$IMAGE_ID \
   --conf spark.yarn.appMasterEnv.YARN_CONTAINER_RUNTIME_DOCKER_MOUNTS=$MOUNTS \
+  --conf spark.yarn.appMasterEnv.YARN_CONTAINER_RUNTIME_DOCKER_RUNTIME=kata \
   --conf spark.executorEnv.YARN_CONTAINER_RUNTIME_TYPE=docker \
   --conf spark.executorEnv.YARN_CONTAINER_RUNTIME_DOCKER_IMAGE=$IMAGE_ID \
   --conf spark.executorEnv.YARN_CONTAINER_RUNTIME_DOCKER_MOUNTS=$MOUNTS \
   --conf spark.executorEnv.YARN_CONTAINER_RUNTIME_DOCKER_CONTAINER_NETWORK=bridge \
-  $SPARK_HOME/examples/jars/spark-examples*.jar 1
+  --conf spark.executorEnv.YARN_CONTAINER_RUNTIME_DOCKER_RUNTIME=kata \
+  $SPARK_HOME/examples/jars/spark-examples*.jar 10
 ```
 
 ![img](./Playbook.assets/screenshot-from-2020-05-15-15-53-58-1.png)
@@ -469,10 +489,24 @@ $SPARK_HOME/bin/spark-submit \
 #### Submit TPC-H Task
 
 ```sh
-MOUNTS="$HADOOP_HOME:$HADOOP_HOME:ro,/etc/passwd:/etc/passwd:ro,/etc/group:/etc/group:ro,/usr/local/hadoop/share/hadoop/mapreduce:/usr/local/hadoop/share/hadoop/mapreduce:ro,/tmp/hadoop-ubuntu/nm-local-dir:/tmp/hadoop-ubuntu/nm-local-dir:rw,/var/log/myapp:/var/log/myapp:rw,/tmp/hadoop-ubuntu/nm-local-dir/usercache/ubuntu:/tmp/hadoop-ubuntu/nm-local-dir/usercache/ubuntu:rw"
+MOUNTS="$HADOOP_HOME:$HADOOP_HOME:ro,/etc/passwd:/etc/passwd:ro,/etc/group:/etc/group:ro,/usr/local/hadoop/share/hadoop/mapreduce:/usr/local/hadoop/share/hadoop/mapreduce:ro,/tmp/hadoop-ubuntu/nm-local-dir:/tmp/hadoop-ubuntu/nm-local-dir:rw"
 IMAGE_ID="library/openjdk:8"
 
-$SPARK_HOME/bin/spark-submit --class "main.scala.TpchQuery" --master yarn --deploy-mode client --executor-memory 2g --num-executors 3 --conf spark.yarn.appMasterEnv.YARN_CONTAINER_RUNTIME_TYPE=docker --conf spark.yarn.appMasterEnv.YARN_CONTAINER_RUNTIME_DOCKER_IMAGE=$IMAGE_ID --conf spark.yarn.appMasterEnv.YARN_CONTAINER_RUNTIME_DOCKER_MOUNTS=$MOUNTS --conf spark.executorEnv.YARN_CONTAINER_RUNTIME_TYPE=docker --conf spark.executorEnv.YARN_CONTAINER_RUNTIME_DOCKER_IMAGE=$IMAGE_ID --conf spark.executorEnv.YARN_CONTAINER_RUNTIME_DOCKER_MOUNTS=$MOUNTS $SPARK_HOME/examples/jars/spark-tpc-h-queries_2.12-1.0.jar
+$SPARK_HOME/bin/spark-submit \
+  --class "main.scala.TpchQuery" \
+  --master yarn \
+  --deploy-mode client \
+  --executor-memory 2g \
+  --num-executors 3 \
+  --conf spark.yarn.appMasterEnv.YARN_CONTAINER_RUNTIME_TYPE=docker \
+  --conf spark.yarn.appMasterEnv.YARN_CONTAINER_RUNTIME_DOCKER_IMAGE=$IMAGE_ID \
+  --conf spark.yarn.appMasterEnv.YARN_CONTAINER_RUNTIME_DOCKER_MOUNTS=$MOUNTS \
+  --conf spark.yarn.appMasterEnv.YARN_CONTAINER_RUNTIME_DOCKER_RUNTIME=kata \
+  --conf spark.executorEnv.YARN_CONTAINER_RUNTIME_TYPE=docker \
+  --conf spark.executorEnv.YARN_CONTAINER_RUNTIME_DOCKER_IMAGE=$IMAGE_ID \
+  --conf spark.executorEnv.YARN_CONTAINER_RUNTIME_DOCKER_MOUNTS=$MOUNTS \
+  --conf spark.executorEnv.YARN_CONTAINER_RUNTIME_DOCKER_RUNTIME=kata \
+  $SPARK_HOME/examples/jars/spark-tpc-h-queries_2.12-1.0.jar
 ```
 
 ## Other Potential Solutions
