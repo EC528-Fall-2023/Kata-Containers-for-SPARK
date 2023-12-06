@@ -18,10 +18,12 @@ x.x.x.x kata2
 
 you can actually do this only on master node, and please use our modified Spark for this.
 
+> Thanks to Sophie for fixing the issue in Spark
+
 ```sh
-wget https://dlcdn.apache.org/spark/spark-3.5.0/spark-3.5.0-bin-hadoop3.tgz
-tar -xvzf spark-3.5.0-bin-hadoop3.tgz
-mv spark-3.5.0-bin-hadoop3.tgz /usr/local/spark
+wget https://github.com/EC528-Fall-2023/Kata-Containers-for-SPARK/releases/download/v0.0.1/spark-3.5.1-SNAPSHOT-bin-custom-spark.tgz
+tar -xvzf spark-3.5.1-SNAPSHOT-bin-custom-spark.tgz
+mv spark-3.5.1-SNAPSHOT-bin-custom-spark /usr/local/spark
 ```
 
 edit `~/.bashrc`
@@ -466,7 +468,7 @@ $SPARK_HOME/bin/spark-submit \
   $SPARK_HOME/examples/jars/spark-examples*.jar 10
 ```
 
-![img](./Playbook.assets/screenshot-from-2020-05-15-16-37-03-1.png)
+![img](./Playbook.assets/spark-client.png)
 
 #### Use Cluster Mode
 
@@ -495,7 +497,7 @@ $SPARK_HOME/bin/spark-submit \
   $SPARK_HOME/examples/jars/spark-examples*.jar 10
 ```
 
-![img](./Playbook.assets/screenshot-from-2020-05-15-15-53-58-1.png)
+![img](./Playbook.assets/spark-cluster.png)
 
 #### Submit TPC-H Task
 
@@ -523,5 +525,18 @@ $SPARK_HOME/bin/spark-submit \
 ## Other Potential Solutions
 
 1. Overlay network (docker swarm)
-2. registry service
+   1. Application Master can run within the overlay network together with executors
+   2. All containers are reachable from each other
+
+
+![img](./Playbook.assets/docker-swarm.png)
+
+2. Hadoop YARN Service Registry
+
+   > [Apache Hadoop 3.3.6 – The YARN Service Registry](https://hadoop.apache.org/docs/stable/hadoop-project-dist/hadoop-common/registry/hadoop-registry.html)
+
+   1. Auto port-mapping for bridge
+   2. Routing Table to record endpoints
+   3. Direct the request
+
 

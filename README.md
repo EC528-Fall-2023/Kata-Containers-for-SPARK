@@ -190,7 +190,7 @@ Below is the diagram showing our final solution, the details will be explained i
 
 ![img](./images/system.svg)
 
-> This diagram is showing the solution for the Spark cluster mode. For the client mode which the Spark Driver will be running at the client's side instead of inside the Application Master, we can directly use Kata container runtime and the bridge network for AM.
+> This diagram is showing the solution for the Spark cluster mode. For the client mode which the Spark Driver will be running at the client's side instead of inside the Application Master, we can directly use Kata container runtime and the bridge network for AM. For more information and differences between two modes, please refer to [Submitting Applications - Spark 3.5.0 Documentation (apache.org)](https://spark.apache.org/docs/latest/submitting-applications.html#launching-applications-with-spark-submit)
 
 #### Deploy Hadoop YARN + Spark with Docker and Kata runtime
 
@@ -215,7 +215,7 @@ The easiest and most doable way to implement that is not to touch the yarn sourc
 
 The Spark Pi test does not involve data shuffling. However, if you want to launch a more complex application which requires data transfer between different executors, the default shuffling service for spark won't work. The default Spark shuffling service will establish an RPC endpoint inside the containers and let them directly do shuffling read and write. This apparently can not be applied to containers in bridge network as containers on different nodes cannot directly talk to each other.
 
-To solve this, we introduced an external shuffle service for spark which runs in the node manager process instead inside of the containers. For more information about this part, please refer to the [Playbook](./docs/Playbook.md).
+To solve this, we introduced an external shuffle service for spark which runs in the node manager process instead inside of the containers. For more information about this part, please refer to the [Playbook.md](https://github.com/EC528-Fall-2023/Kata-Containers-for-SPARK/blob/main/docs/Playbook.md#configuring-an-external-shuffle-service-for-spark).
 
 
 ### Design Implications and Discussion
