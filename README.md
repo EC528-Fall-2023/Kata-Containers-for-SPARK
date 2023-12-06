@@ -286,9 +286,6 @@ In our solution for the cluster mode, the biggest concern is that the Applicatio
      - Memory bandwidth, memory allocation (stresses virtual memory subsystem), CPU performance
        - Can use `stress-ng` for this, there are several tests available there (e.g., matrix multiple for CPU, memory bandwidth, vmem allocator, etc.)
        ![CPU_MEM](./images/CPU_and_Memory.png)
-   - End to end benchmarks
-   
-     - TPC-H (This will be delayed)
 
    Each test should compare:
 
