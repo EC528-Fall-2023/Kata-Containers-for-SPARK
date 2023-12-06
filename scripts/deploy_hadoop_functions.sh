@@ -1,5 +1,5 @@
 #!/bin/bash
-
+# You need to use your own public key file.
 LOCAL_KEY_PRI=$HOME/.ssh/id_ed25519
 LOCAL_KEY_PUB=$HOME/.ssh/id_ed25519.pub
 INIT_USER='ubuntu'
