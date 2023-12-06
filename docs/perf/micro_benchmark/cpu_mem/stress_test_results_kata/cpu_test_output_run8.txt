@@ -1,0 +1,6 @@
+stress-ng: info:  [291] setting to a 60 second run per stressor
+stress-ng: info:  [291] dispatching hogs: 40 matrix
+stress-ng: info:  [291] successful run completed in 60.01s (1 min, 0.01 secs)
+stress-ng: info:  [291] stressor       bogo ops real time  usr time  sys time   bogo ops/s     bogo ops/s
+stress-ng: info:  [291]                           (secs)    (secs)    (secs)   (real time) (usr+sys time)
+stress-ng: info:  [291] matrix          4148715     60.00   2399.80      0.00     69145.21        1728.78
