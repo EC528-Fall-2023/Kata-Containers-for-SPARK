@@ -251,19 +251,18 @@ In our solution for the cluster mode, the biggest concern is that the Applicatio
 
    **Bare metal machine cluster**
 
-   - Bare metal machine cluster
+  ---
+
+   Number of nodes: 4 OS: ubuntu 22.4
+
+   Socket(s): 2  Core(s) per socket:  10  Thread per core:  2
+
+   Memory: 251 Gi Swap: 8Gi
+
+   Turbo Boost: Running Frequency scaling: Disabled
+
+   ---
    
-   - Number of nodes: 4
-   
-   - OS: ubuntu 22.4
-   
-   - Socket(s): 2     Core(s) per socket:  10  Thread per core:  2
-   
-   - Memory: 251 Gi Swap: 8Gi
-   
-   - Turbo Boost: Running
-   
-   - Frequency scaling: Disabled
    - Microbenchmarks(check docs/petf/micro_benchmark/README)
    
      - I/O
