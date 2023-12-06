@@ -247,11 +247,10 @@ In our solution for the cluster mode, the biggest concern is that the Applicatio
    - **Reasoning**: The goal to securely run multi-tenant Spark workloads demands a solution that offers stronger isolation than standard containers. Kata Containers strike a balance between the agility of containers and the isolation of VMs.
    
 2. **Performance Benchmarking**:
-   **Environment setup**
-
-   **Bare metal machine cluster**
 
   ---
+   **Environment setup**
+   **Bare metal machine cluster**
 
    Number of nodes: 4 OS: ubuntu 22.4
 
