@@ -39,7 +39,7 @@
 
 ## Final Demo
 
-- TBD
+- [Slides](https://docs.google.com/presentation/d/1z2_XUxM3Jr-6DaZT0FvOEB99pXPVBwVAvXt8rEmsAG4/edit?usp=sharing)
 
 
 ## 1.   Vision and Goals Of The Project:
