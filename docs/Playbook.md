@@ -428,6 +428,17 @@ sudo docker info | grep -i runtime
   docker.allowed.runtimes=runc,kata
 ```
 
+### Configuring an External Shuffle Service for Spark
+
+> Reference: [Running Spark on YARN - Spark 3.5.0 Documentation (apache.org)](https://spark.apache.org/docs/latest/running-on-yarn.html#configuring-the-external-shuffle-service)
+
+1. Build Spark with the [YARN profile](https://spark.apache.org/docs/latest/building-spark.html). Skip this step if you are using a pre-packaged distribution.
+2. Locate the `spark-<version>-yarn-shuffle.jar`. This should be under `$SPARK_HOME/common/network-yarn/target/scala-<version>` if you are building Spark yourself, and under `yarn` if you are using a distribution.
+3. Add this jar to the classpath of all `NodeManager` in your cluster.
+4. In the `yarn-site.xml` on each node, add `spark_shuffle` to `yarn.nodemanager.aux-services`, then set `yarn.nodemanager.aux-services.spark_shuffle.class` to `org.apache.spark.network.yarn.YarnShuffleService`.
+5. Increase `NodeManager` heap size by setting `YARN_HEAPSIZE` (1000 by default) in `etc/hadoop/yarn-env.sh` to avoid garbage collection issues during shuffle.
+6. Restart all `NodeManager` in your cluster.
+
 ### Submit a Spark Task
 
 #### Use Client Mode
