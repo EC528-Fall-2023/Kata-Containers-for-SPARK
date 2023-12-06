@@ -190,9 +190,13 @@ Below is the diagram showing our final solution, the details will be explained i
 
 ![img](./images/system.svg)
 
+> This diagram is showing the solution for the Spark cluster mode. For the client mode which the Spark Driver will be running at the client's side instead of inside the Application Master, we can directly use Kata container runtime and the bridge network for AM.
+
 #### Deploy Hadoop YARN + Spark with Docker and Kata runtime
 
 To run Spark application on Hadoop YARN with Docker containers (RunC / Kata), we need to deploy the Hadoop cluster, use [deploy_hadoop.sh](./scripts/deploy_hadoop.sh) can easily auto-deploy the required components. [Usage of deploy_hadoop.sh](./scripts/README.md)
+
+> If you want manually set the cluster, please refer to the [playbook](./docs/Playbook.md)
 
 #### Launching applications in Kata through docker
 
@@ -203,8 +207,15 @@ The easiest and most doable way to implement that is not to touch the yarn sourc
 > Another solution is launching applications directly in Kata. As our mentor mentioned, the ideal way to do that is to put Kata out of the box, which is much more complicated. This required us to implement some runtime classes under yarn like runc did (following the OCI standards), which will require us to look deeper at the interfaces of Linux Container Executor, and which we don't have enough time to do.
 
 **Spark application examples (run with Kata)**
+
 1. [Spark Shell Example](./scripts/examples/run_spark_shell_kata.sh)
 2. [Spark Pi Example](./scripts/examples/run_spark_pi_kata.sh)
+
+#### Enable More Complex Functionality
+
+The Spark Pi test does not involve data shuffling. However, if you want to launch a more complex application which requires data transfer between different executors, the default shuffling service for spark won't work. The default Spark shuffling service will establish an RPC endpoint inside the containers and let them directly do shuffling read and write. This apparently can not be applied to containers in bridge network as containers on different nodes cannot directly talk to each other.
+
+To solve this, we introduced an external shuffle service for spark which runs in the node manager process instead inside of the containers. For more information about this part, please refer to the [Playbook](./docs/Playbook.md).
 
 
 ### Design Implications and Discussion
@@ -225,13 +236,14 @@ The easiest and most doable way to implement that is not to touch the yarn sourc
            - IOPS (e.g., 4K random read/writes)
    
            - BW (e.g., sequential read and sequential write of large files with large block size)
-           ![Storage](./images/Storage.png)
+       ![Storage](./images/Storage.png)
+
        - Networking
-   
+       
          - use `iperf3` to measure
-   
+       
            - TCP bandwidth
-   
+       
            - UDP latency (e.g., packets per second, tail latency like P95)
           ![Netwrok](./images/Network.png)
      - Memory bandwidth, memory allocation (stresses virtual memory subsystem), CPU performance
@@ -240,9 +252,9 @@ The easiest and most doable way to implement that is not to touch the yarn sourc
    - End to end benchmarks
    
      - TPC-H (have to look around for what's the best way to do this for Spark)
-   
+
    Each test should compare:
-   
+
    - Docker container performance
    - Kata container performance
 
