@@ -14,8 +14,6 @@
 | Jinquan Pan                    | Developer   | vin3nt@bu.edu                    |
 | Jingwei Zhang                  | Developer   | jwz16@bu.edu                     |
 
-** **
-
 ## Sprint 1
 
 - [Presentation recording](https://bostonu.zoom.us/rec/share/-OiGa3CJQ71iLRJBKAZXCP4AW68naMUIR45OdTiJbJGVqiFFaTzC_bIyjk3Hacrl.xsRotqA5Ktk2xVG9?startTime=1695834627000) (password: h$7wCE!B)
@@ -41,7 +39,7 @@
 
 ## Final Demo
 
-- 
+- TBD
 
 
 ## 1.   Vision and Goals Of The Project:
@@ -69,8 +67,7 @@ Therefore, the goals of our project are:
 
 ### Challenges
 
-We have encountered multiple challenges in this project:
-1. Spark Executor binding issue in Docker Bridge Network, [Root Cause Analysis](https://github.com/EC528-Fall-2023/Kata-Containers-for-SPARK/blob/main/docs/troubleshoot/rca-docker-bridge-net.md).
+We have encountered a challenge in this project: Spark Executor binding issue in Docker Bridge Network, [Root Cause Analysis](https://github.com/EC528-Fall-2023/Kata-Containers-for-SPARK/blob/main/docs/troubleshoot/rca-docker-bridge-net.md).
 
 ## 2. Users/Personas Of The Project:
 
@@ -98,9 +95,7 @@ We have encountered multiple challenges in this project:
 
 - **Challenges**: Ricky needs to ensure data integrity and confidentiality while maintaining optimal performance for data processing tasks.
 
-** **
-
-## 3.   Scope and Features Of The Project:
+## 3. Scope and Features Of The Project:
 
 ### Container Integration:
 
@@ -125,8 +120,6 @@ If applicable, contribute the configurations, modifications, and best practices 
 ### Documentation:
 
 Create detailed documentation covering configurations, deployment procedures, security enhancements, and performance optimization steps.
-
-** **
 
 ## 4. Solution Concept
 
@@ -193,7 +186,11 @@ Create detailed documentation covering configurations, deployment procedures, se
 
 ### Final Solution
 
-#### 1. Launching applications in Kata through docker
+#### Deploy Hadoop YARN + Spark with Docker and Kata runtime
+
+To run Spark application on Hadoop YARN with Docker containers (RunC / Kata), we need to deploy the Hadoop cluster, use [deploy_hadoop.sh](./scripts/deploy_hadoop.sh) can easily auto-deploy the required components. [Usage of deploy_hadoop.sh](./scripts/README.md)
+
+#### Launching applications in Kata through docker
 
 ![img](./images/kataInDocker.png)
 
@@ -201,8 +198,9 @@ The easiest and most doable way to implement that is not to touch the yarn sourc
 
 > Another solution is launching applications directly in Kata. As our mentor mentioned, the ideal way to do that is to put Kata out of the box, which is much more complicated. This required us to implement some runtime classes under yarn like runc did (following the OCI standards), which will require us to look deeper at the interfaces of Linux Container Executor, and which we don't have enough time to do.
 
-#### 2. 
-
+**Spark application examples (run with Kata)**
+1. [Spark Shell Example](./scripts/examples/run_spark_shell_kata.sh)
+2. [Spark Pi Example](./scripts/examples/run_spark_pi_kata.sh)
 
 
 ### Design Implications and Discussion
@@ -211,7 +209,7 @@ The easiest and most doable way to implement that is not to touch the yarn sourc
    - **Implication**: Incorporating Kata Containers introduces an added layer of complexity in setup and operation compared to traditional containers. However, the trade-off is a significantly enhanced security posture.
    - **Reasoning**: The goal to securely run multi-tenant Spark workloads demands a solution that offers stronger isolation than standard containers. Kata Containers strike a balance between the agility of containers and the isolation of VMs.
    
-3. **Performance Benchmarking**:
+2. **Performance Benchmarking**:
    - Microbenchmarks(check docs/petf/micro_benchmark/README)
    
      - I/O
