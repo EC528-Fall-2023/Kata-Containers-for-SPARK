@@ -1,0 +1,4 @@
+{
+    "exec-opts": ["native.cgroupdriver=cgroupfs"],
+    "default-runtime": "io.containerd.kata.v2"
+}
