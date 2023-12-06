@@ -186,6 +186,10 @@ Create detailed documentation covering configurations, deployment procedures, se
 
 ### Final Solution
 
+Below is the diagram showing our final solution, the details will be explained in the following passages.
+
+![img](./images/system.svg)
+
 #### Deploy Hadoop YARN + Spark with Docker and Kata runtime
 
 To run Spark application on Hadoop YARN with Docker containers (RunC / Kata), we need to deploy the Hadoop cluster, use [deploy_hadoop.sh](./scripts/deploy_hadoop.sh) can easily auto-deploy the required components. [Usage of deploy_hadoop.sh](./scripts/README.md)
