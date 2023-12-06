@@ -217,6 +217,28 @@ The Spark Pi test does not involve data shuffling. However, if you want to launc
 
 To solve this, we introduced an external shuffle service for spark which runs in the node manager process instead inside of the containers. For more information about this part, please refer to the [Playbook.md](https://github.com/EC528-Fall-2023/Kata-Containers-for-SPARK/blob/main/docs/Playbook.md#configuring-an-external-shuffle-service-for-spark).
 
+#### Limitations and Future Work
+
+##### Other Potential Solutions for Communication Across Nodes in Cluster Mode
+
+In our solution for the cluster mode, the biggest concern is that the Application Master is still running on the host using the default RunC, while the executors are isolated in different Kata containers. For that part, there could be two potential solutions in the future.
+
+1. Overlay network (docker swarm)
+   1. Application Master can run within the overlay network together with executors
+   2. All containers are reachable from each other, which also solved the shuffling issue and the Spark's own shuffling can work
+
+![img](./images/docker-swarm.png)
+
+2. Hadoop YARN Service Registry
+
+   > [Apache Hadoop 3.3.6 – The YARN Service Registry](https://hadoop.apache.org/docs/stable/hadoop-project-dist/hadoop-common/registry/hadoop-registry.html)
+
+   1. Hadoop can do auto port-mapping for bridge network, it will randomly map those ports to the host
+   2. The Service Registry have a manchanism like a routing table to record endpoints (which ports in containers correspond to which on the host)
+   3. And when a request comes in, it can direct the request to the correct container
+   
+   > Sadly didn’t find any useful information proves that Spark supports this… (Apache Storm and some other frameworks already supported this) But this looks like the most reasonable native solution.
+
 
 ### Design Implications and Discussion
 
@@ -251,7 +273,7 @@ To solve this, we introduced an external shuffle service for spark which runs in
        ![CPU_MEM](./images/CPU_and_Memory.png)
    - End to end benchmarks
    
-     - TPC-H (have to look around for what's the best way to do this for Spark)
+     - TPC-H (This will be delayed)
 
    Each test should compare:
 
@@ -278,7 +300,7 @@ To solve this, we introduced an external shuffle service for spark which runs in
 So after the discussion with our mentors, we set the current system structure of our MVP as the diagram shown below:
 ![MVP](./images/MVP.png)
 
-So firstly we will finish the first method we've mentioned before, which is keep Kata running in Docker by simply replacing the runtime of Docker from RunC to Kata. And all our performance benchmarks (WIP) and security assessments (this part may be only in theory) will be based on this structure. 
+At the end we finished the first method we've mentioned before, which is keep Kata running in Docker by simply replacing the runtime of Docker from RunC to Kata. Additionally, we also enabled the cluster mode for Spark in our system and introduced an external shuffle service to transfer data across different bridge networks. 
 
 ### Project Timeline
 

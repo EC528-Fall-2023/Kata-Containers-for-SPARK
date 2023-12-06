@@ -522,21 +522,3 @@ $SPARK_HOME/bin/spark-submit \
   $SPARK_HOME/examples/jars/spark-tpc-h-queries_2.12-1.0.jar
 ```
 
-## Other Potential Solutions
-
-1. Overlay network (docker swarm)
-   1. Application Master can run within the overlay network together with executors
-   2. All containers are reachable from each other
-
-
-![img](./Playbook.assets/docker-swarm.png)
-
-2. Hadoop YARN Service Registry
-
-   > [Apache Hadoop 3.3.6 – The YARN Service Registry](https://hadoop.apache.org/docs/stable/hadoop-project-dist/hadoop-common/registry/hadoop-registry.html)
-
-   1. Auto port-mapping for bridge
-   2. Routing Table to record endpoints
-   3. Direct the request
-
-
