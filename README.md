@@ -40,7 +40,7 @@
 ## Final Demo
 
 - [Slides](https://docs.google.com/presentation/d/1z2_XUxM3Jr-6DaZT0FvOEB99pXPVBwVAvXt8rEmsAG4/edit?usp=sharing)
-- [Video (from 1:06:27 to 1:27:44)](https://drive.google.com/file/d/1Jah9UcXN3myCtYNdIHAixT4wfqlLaM7H/view)
+- [Video](https://drive.google.com/file/d/1CH2RA5_qm_3BqkhQcubybcnb2Hlb5D2e/view?usp=sharing)
 
 ## 1.   Vision and Goals Of The Project:
 
